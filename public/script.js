@@ -30,333 +30,112 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
+// ✅ Vérifier si un lien d'invitation est utilisé et remplir automatiquement le champ
+function checkReferralOnRegister() {
+    const pathParts = window.location.pathname.split('/');
+    if (pathParts[1] === "invite" && pathParts[2]) {
+        const referralCode = pathParts[2];
+        console.log("Code de parrainage détecté :", referralCode);
+        const referralInput = document.getElementById("referralCode");
+        if (referralInput) {
+            referralInput.value = referralCode;
+        }
+    }
+}
+document.addEventListener("DOMContentLoaded", checkReferralOnRegister);
+
+// ✅ Génération du lien de parrainage propre
+function showReferralPopup(referralCode) {
+    const referralLink = `${window.location.origin}/invite/${referralCode}`;
+
+    const popup = document.createElement("div");
+    popup.classList.add("popup");
+    popup.innerHTML = `
+        <p>Votre lien de parrainage :</p>
+        <input type="text" id="referralLink" value="${referralLink}" readonly>
+        <button onclick="copyReferralLink()">📋 Copier</button>
+    `;
+
+    document.body.appendChild(popup);
+}
+
+// ✅ Fonction pour copier le lien
+function copyReferralLink() {
+    const input = document.getElementById("referralLink");
+    input.select();
+    document.execCommand("copy");
+
+    const button = document.querySelector(".popup button");
+    button.innerText = "✅ Copié !";
+    button.disabled = true;
+}
+
+// ✅ Fonction d'inscription
 async function register() {
-    const phoneNumber = document.getElementById('phoneNumber').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-    const referralCode = document.getElementById('referralCode')?.value;
+    const phoneNumber = document.getElementById("phoneNumber").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+    const referralCode = document.getElementById("referralCode")?.value || null;
 
     if (password !== confirmPassword) {
-        alert('Les mots de passe ne correspondent pas');
+        alert("Les mots de passe ne correspondent pas");
         return;
     }
 
     try {
-        const res = await fetch('https://pon-app.onrender.com/api/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const res = await fetch("https://pon-app.onrender.com/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phoneNumber, email, password, referralCode })
         });
         const data = await res.json();
         if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('isAdmin', data.isAdmin);
-            window.location.href = '/';
+            localStorage.setItem("token", data.token);
+            alert("Inscription réussie !");
+            window.location.href = "/index.html";
         } else {
-            alert(data.error || 'Erreur lors de l\'inscription');
+            alert("Erreur : " + data.error);
         }
     } catch (err) {
-        alert('Erreur lors de l\'inscription');
-        console.error(err);
+        console.error("Erreur API:", err);
+        alert("Erreur lors de l'inscription.");
     }
 }
 
+// ✅ Fonction de connexion
 async function login() {
-    const phoneNumber = document.getElementById('phoneNumber').value;
-    const password = document.getElementById('password').value;
+    const phoneNumber = document.getElementById("phoneNumber").value;
+    const password = document.getElementById("password").value;
 
     try {
-        const res = await fetch('https://pon-app.onrender.com/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const res = await fetch("https://pon-app.onrender.com/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phoneNumber, password })
         });
         const data = await res.json();
         if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('isAdmin', data.isAdmin);
-            window.location.href = '/';
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("isAdmin", data.isAdmin);
+            window.location.href = "/";
         } else {
-            alert(data.error || 'Erreur lors de la connexion');
+            alert(data.error || "Erreur lors de la connexion");
         }
     } catch (err) {
-        alert('Erreur lors de la connexion');
+        alert("Erreur lors de la connexion");
         console.error(err);
     }
 }
 
-function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('isAdmin');
-    window.location.href = '/login.html';
-}
-
-fetch("https://pon-app.onrender.com/api/deposit", { 
-    method: "POST",
-    headers: { 
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token") // Ajoute le token si besoin
-    },
-    body: JSON.stringify({ amount: 5000 }) // Exemple de montant
-})
-.then(response => response.json())
-.then(data => console.log("Réponse API:", data))
-.catch(error => console.error("Erreur API:", error));
-
-
-async function withdraw() {
-    const amount = document.getElementById('amount').value;
-    const withdrawNumber = document.getElementById('withdrawNumber').value;
-    const withdrawMethod = document.getElementById('withdrawMethod').value;
-
-    if (!withdrawNumber) {
-        alert('Veuillez entrer un numéro de retrait');
-        return;
-    }
-
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/withdraw', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ 
-                amount: parseFloat(amount),
-                withdrawNumber,
-                withdrawMethod 
-            })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            alert(data.message);
-            fetchUserData();
-        } else {
-            alert(data.error || 'Erreur lors du retrait');
-        }
-    } catch (err) {
-        alert('Erreur lors du retrait');
-        console.error(err);
-    }
-}
-
-async function fetchUserData() {
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/user', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
-        const data = await res.json();
-        
-        if (document.getElementById('ref-link')) {
-            document.getElementById('ref-link').textContent = data.referralLink || 'Non disponible';
-        }
-        if (document.getElementById('balance')) {
-            document.getElementById('balance').textContent = `${data.balance} F`;
-        }
-        if (document.getElementById('tier-level')) {
-            document.getElementById('tier-level').textContent = data.tierLevel > 0 ? `Palier ${data.tierLevel}` : 'Aucun';
-        }
-        if (document.getElementById('referral-earnings')) {
-            document.getElementById('referral-earnings').textContent = `${data.referralEarnings} F`;
-        }
-    } catch (err) {
-        console.error('Erreur lors de la récupération des données:', err);
-    }
-}
-
-async function fetchMiningData() {
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/user', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
-        const data = await res.json();
-
-        const tierLevel = data.tierLevel > 0 ? `Palier ${data.tierLevel}` : 'Aucun';
-        document.getElementById('tier-level').textContent = tierLevel;
-
-        const dailyGains = [750, 1500, 2250, 3000, 3750];
-        const dailyGain = data.tierLevel > 0 ? dailyGains[data.tierLevel - 1] : 0;
-        document.getElementById('daily-gain').textContent = `${dailyGain} F`;
-
-        const now = new Date();
-        const lastGain = data.lastDailyGain ? new Date(data.lastDailyGain) : null;
-        let timeRemaining = 'Disponible maintenant';
-        if (lastGain) {
-            const timeSinceLastGain = now - lastGain;
-            const oneDay = 24 * 60 * 60 * 1000;
-            if (timeSinceLastGain < oneDay) {
-                const remainingMs = oneDay - timeSinceLastGain;
-                const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-                const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-                timeRemaining = `${hours}h ${minutes}m`;
-                document.getElementById('claim-btn').disabled = true;
-            } else {
-                document.getElementById('claim-btn').disabled = false;
-            }
-        } else {
-            document.getElementById('claim-btn').disabled = data.tierLevel === 0;
-        }
-        document.getElementById('time-remaining').textContent = timeRemaining;
-    } catch (err) {
-        console.error('Erreur lors de la récupération des données de minage:', err);
-    }
-}
-
-async function buyTier(level) {
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/buy-tier', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ tierLevel: level })
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
-        fetchUserData();
-        if (window.location.pathname === '/mining.html') fetchMiningData();
-    } catch (err) {
-        alert('Erreur lors de l\'achat du palier');
-        console.error(err);
-    }
-}
-
-async function claimDailyGain() {
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/daily-gain', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({})
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
-        fetchUserData();
-        fetchMiningData();
-    } catch (err) {
-        alert('Erreur lors de la réclamation du gain');
-        console.error(err);
-    }
-}
-
-async function generateInviteLink() {
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/user', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);
-        const data = await res.json();
-        console.log('Réponse de /api/user :', data);
-
-        let referralLink = data.referralLink;
-        if (!referralLink && data.referralCode) {
-            referralLink = `http://localhost:3000/register.html?ref=${data.referralCode}`;
-        }
-        referralLink = referralLink || 'Non disponible';
-
-        document.getElementById('ref-link').textContent = referralLink;
-        alert(`Ton lien d'invitation : ${referralLink}`);
-    } catch (err) {
-        alert('Erreur lors de la génération du lien : ' + err.message);
-        console.error(err);
-    }
-}
-
-async function fetchUsers() {
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/admin/users', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);
-        const users = await res.json();
-        console.log('Utilisateurs reçus :', users);
-        const tbody = document.getElementById('users');
-        if (!tbody) {
-            console.error('Élément #users non trouvé');
-            return;
-        }
-        tbody.innerHTML = users.map(u => 
-            `<tr>
-                <td>${u._id}</td>
-                <td>${u.phoneNumber}</td>
-                <td>${u.email}</td>
-                <td>${u.balance} F</td>
-                <td>${u.tierLevel > 0 ? 'Palier ' + u.tierLevel : 'Aucun'}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="editUser('${u._id}')">Modifier</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">Supprimer</button>
-                </td>
-            </tr>`
-        ).join('');
-    } catch (err) {
-        console.error('Erreur lors de la récupération des utilisateurs:', err);
-    }
-}
-
-function editUser(id) {
-    document.getElementById('userId').value = id;
-}
-
-async function updateUser() {
-    const userId = document.getElementById('userId').value;
-    const balance = document.getElementById('balance').value;
-    const password = document.getElementById('password').value;
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/admin/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ userId, balance: parseFloat(balance), password })
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
-        fetchUsers();
-    } catch (err) {
-        alert('Erreur lors de la mise à jour');
-        console.error(err);
-    }
-}
-
-async function deleteUser(userId) {
-    if (!confirm("Es-tu sûr de vouloir supprimer cet utilisateur ?")) return;
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/admin/delete', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ userId })
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
-        fetchUsers();
-    } catch (err) {
-        alert('Erreur lors de la suppression');
-        console.error(err);
-    }
-}
-
-async function fetchReferrals() {
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/user', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
-        const tbody = document.getElementById('referrals');
-        tbody.innerHTML = data.referrals.map(r => 
-            `<tr>
-                <td>${r.phoneNumber}</td>
-                <td>${r.deposit} F</td>
-                <td>${new Date(r.date).toLocaleDateString()}</td>
-            </tr>`
-        ).join('');
-        document.getElementById('referral-earnings').textContent = `${data.referralEarnings} F`;
-    } catch (err) {
-        console.error('Erreur lors de la récupération des parrainages:', err);
-    }
-}
-
+// ✅ Fonction pour effectuer un dépôt
 function deposit() {
     console.log("Dépôt en cours...");
     fetch("https://pon-app.onrender.com/api/deposit", { 
         method: "POST",
         headers: { 
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("token") // Ajoute le token JWT
+            "Authorization": "Bearer " + localStorage.getItem("token")
         }
     })
     .then(response => response.json())
@@ -367,19 +146,22 @@ function deposit() {
     .catch(error => console.error("Erreur API:", error));
 }
 
+// ✅ Fonction de déconnexion
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAdmin");
+    window.location.href = "/login.html";
+}
 
-async function requestReset() {
-    const phoneNumber = document.getElementById('phoneNumberReset').value;
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/request-reset', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phoneNumber })
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
-    } catch (err) {
-        alert('Erreur lors de la demande de réinitialisation');
-        console.error(err);
+function checkReferralOnRegister() {
+    const pathParts = window.location.pathname.split('/');
+    if (pathParts[1] === "invite" && pathParts[2]) {
+        const referralCode = pathParts[2];
+        console.log("Code de parrainage détecté :", referralCode);
+        const referralInput = document.getElementById("referralCode");
+        if (referralInput) {
+            referralInput.value = referralCode;
+        }
     }
 }
+document.addEventListener("DOMContentLoaded", checkReferralOnRegister);
