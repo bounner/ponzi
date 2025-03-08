@@ -144,3 +144,33 @@ body {
 h1, h2, h3, h4, h5, h6, p, a, label, span {
     color: #000 !important; /* Force le noir */
 }
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 1000;
+}
+.popup input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    text-align: center;
+}
+.popup button {
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.popup button:disabled {
+    background-color: #666;
+    cursor: default;
+}
