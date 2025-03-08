@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="index.html" class="home-icon"><i class="fas fa-home"></i> Accueil</a>
+    <a href="javascript:history.back()" class="back-icon"><i class="fas fa-arrow-left"></i> Retour</a>
+    <div class="container mt-5">
+        <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body">
+                <h1 class="text-center">Connexion</h1>
+                <form>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Numéro de Téléphone</label>
+                        <input type="text" id="phoneNumber" class="form-control" placeholder="Ex: 691234567">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de Passe</label>
+                        <input type="password" id="password" class="form-control" placeholder="Entrez votre mot de passe">
+                    </div>
+                    <button type="button" onclick="login()" class="btn btn-primary w-100"><i class="fas fa-sign-in-alt"></i> Connexion</button>
+                    <p class="text-center mt-3">
+                        <a href="#" onclick="document.getElementById('reset-form').style.display='block'; return false;">Mot de passe oublié ?</a>
+                    </p>
+                    <div id="reset-form" style="display: none;">
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Entrez votre numéro de téléphone</label>
+                            <input type="text" id="phoneNumberReset" class="form-control" placeholder="Ex: 691234567">
+                        </div>
+                        <button type="button" onclick="requestReset()" class="btn btn-secondary w-100"><i class="fas fa-key"></i> Demander Réinitialisation</button>
+                    </div>
+                </form>
+                <p class="text-center mt-3"><a href="register.html">Pas de compte ? Inscris-toi</a></p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+/* Existing styles (unchanged) */
+body {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    font-family: 'Poppins', sans-serif;
+    color: #e0e0e0;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    padding: clamp(10px, 2vw, 30px);
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 700;
+    margin-bottom: clamp(10px, 2vw, 25px);
+    color: #00d4ff;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    text-align: center;
+}
+
+h3 {
+    color: #e94560;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(233, 69, 96, 0.3);
+    font-size: clamp(1rem, 3vw, 1.8rem);
+}
+
+.btn {
+    padding: clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px);
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    font-weight: 600;
+    border-radius: 25px;
+    border: none;
+    transition: all 0.3s ease;
+    margin: clamp(5px, 1vw, 10px);
+    background: linear-gradient(90deg, #00d4ff, #e94560);
+    color: #fff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn-sm {
+    padding: clamp(5px, 1vw, 8px) clamp(10px, 2vw, 12px);
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+}
+
+/* New styles for responsive action buttons */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(5px, 1vw, 10px);
+    justify-content: center;
+}
+
+.action-buttons .btn {
+    flex: 1 1 clamp(80px, 30%, 120px); /* Flexible width, min 80px, max 120px */
+    margin: 0; /* Override default btn margin */
+    padding: clamp(5px, 1vw, 8px) clamp(8px, 1.5vw, 12px);
+    font-size: clamp(0.6rem, 1.2vw, 0.9rem);
+}
+
+@media (max-width: 576px) {
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .action-buttons .btn {
+        flex: 1 1 auto; /* Full width on small screens */
+        width: 100%;
+    }
+}
+
+.table td {
+    padding: clamp(8px, 1.5vw, 15px);
+    font-size: clamp(0.7rem, 1.5vw, 1rem);
+    white-space: nowrap;
+}
+
+/* Ensure table responsiveness */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Rest of your existing styles (unchanged) */
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    padding: clamp(10px, 2vw, 20px);
+    transition: transform 0.3s ease;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.form-control {
+    border-radius: 10px;
+    padding: clamp(8px, 1.5vw, 12px);
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.home-icon, .back-icon {
+    position: fixed;
+    top: clamp(5px, 1vh, 15px);
+    left: clamp(5px, 1vw, 15px);
+    background: rgba(0, 212, 255, 0.8);
+    color: white;
+    padding: clamp(6px, 1vw, 10px) clamp(10px, 2vw, 15px);
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    transition: 0.3s;
+    z-index: 1000;
+}
+
+.back-icon {
+    left: auto;
+    right: clamp(5px, 1vw, 15px);
+}
