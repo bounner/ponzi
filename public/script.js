@@ -92,21 +92,18 @@ function logout() {
     window.location.href = '/login.html';
 }
 
-async function deposit() {
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/deposit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({})
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
-        fetchUserData();
-    } catch (err) {
-        alert('Erreur lors du dépôt');
-        console.error(err);
-    }
-}
+fetch("https://pon-app.onrender.com/api/deposit", { 
+    method: "POST",
+    headers: { 
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token") // Ajoute le token si besoin
+    },
+    body: JSON.stringify({ amount: 5000 }) // Exemple de montant
+})
+.then(response => response.json())
+.then(data => console.log("Réponse API:", data))
+.catch(error => console.error("Erreur API:", error));
+
 
 async function withdraw() {
     const amount = document.getElementById('amount').value;
