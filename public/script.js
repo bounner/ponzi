@@ -43,7 +43,7 @@ async function register() {
     }
 
     try {
-        const res = await fetch('/api/register', {
+        const res = await fetch('https://pon-app.onrender.com/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phoneNumber, email, password, referralCode })
@@ -67,7 +67,7 @@ async function login() {
     const password = document.getElementById('password').value;
 
     try {
-        const res = await fetch('/api/login', {
+        const res = await fetch('https://pon-app.onrender.com/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phoneNumber, password })
@@ -94,7 +94,7 @@ function logout() {
 
 async function deposit() {
     try {
-        const res = await fetch('/api/deposit', {
+        const res = await fetch('https://pon-app.onrender.com/api/deposit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({})
@@ -119,7 +119,7 @@ async function withdraw() {
     }
 
     try {
-        const res = await fetch('/api/withdraw', {
+        const res = await fetch('https://pon-app.onrender.com/api/withdraw', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ 
@@ -143,7 +143,7 @@ async function withdraw() {
 
 async function fetchUserData() {
     try {
-        const res = await fetch('/api/user', {
+        const res = await fetch('https://pon-app.onrender.com/api/user', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) throw new Error("Erreur lors de la récupération des données");
@@ -168,7 +168,7 @@ async function fetchUserData() {
 
 async function fetchMiningData() {
     try {
-        const res = await fetch('/api/user', {
+        const res = await fetch('https://pon-app.onrender.com/api/user', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) throw new Error("Erreur lors de la récupération des données");
@@ -207,7 +207,7 @@ async function fetchMiningData() {
 
 async function buyTier(level) {
     try {
-        const res = await fetch('/api/buy-tier', {
+        const res = await fetch('https://pon-app.onrender.com/api/buy-tier', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ tierLevel: level })
@@ -224,7 +224,7 @@ async function buyTier(level) {
 
 async function claimDailyGain() {
     try {
-        const res = await fetch('/api/daily-gain', {
+        const res = await fetch('https://pon-app.onrender.com/api/daily-gain', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({})
@@ -241,7 +241,7 @@ async function claimDailyGain() {
 
 async function generateInviteLink() {
     try {
-        const res = await fetch('/api/user', {
+        const res = await fetch('https://pon-app.onrender.com/api/user', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);
@@ -264,7 +264,7 @@ async function generateInviteLink() {
 
 async function fetchUsers() {
     try {
-        const res = await fetch('/api/admin/users', {
+        const res = await fetch('https://pon-app.onrender.com/api/admin/users', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) throw new Error(`Erreur HTTP : ${res.status}`);
@@ -302,7 +302,7 @@ async function updateUser() {
     const balance = document.getElementById('balance').value;
     const password = document.getElementById('password').value;
     try {
-        const res = await fetch('/api/admin/update', {
+        const res = await fetch('https://pon-app.onrender.com/api/admin/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ userId, balance: parseFloat(balance), password })
@@ -319,7 +319,7 @@ async function updateUser() {
 async function deleteUser(userId) {
     if (!confirm("Es-tu sûr de vouloir supprimer cet utilisateur ?")) return;
     try {
-        const res = await fetch('/api/admin/delete', {
+        const res = await fetch('https://pon-app.onrender.com/api/admin/delete', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ userId })
@@ -335,7 +335,7 @@ async function deleteUser(userId) {
 
 async function fetchReferrals() {
     try {
-        const res = await fetch('/api/user', {
+        const res = await fetch('https://pon-app.onrender.com/api/user', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -356,7 +356,7 @@ async function fetchReferrals() {
 async function requestReset() {
     const phoneNumber = document.getElementById('phoneNumberReset').value;
     try {
-        const res = await fetch('/api/request-reset', {
+        const res = await fetch('https://pon-app.onrender.com/api/request-reset', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phoneNumber })
