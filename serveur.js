@@ -81,6 +81,18 @@ app.post('/api/register', async (req, res) => {
         res.status(500).json({ error: 'Erreur serveur lors de l\'inscription' });
     }
 });
+//depot
+app.post('/api/deposit', async (req, res) => {
+    try {
+        req.user.depositMade = true;
+        await req.user.save();
+        res.json({ message: "Dépôt enregistré. Envoie la capture à l'admin pour mise à jour du solde." });
+    } catch (err) {
+        console.error("Erreur dépôt :", err);
+        res.status(500).json({ error: "Erreur serveur lors du dépôt" });
+    }
+});
+
 
 // Connexion
 app.post('/api/login', async (req, res) => {
@@ -112,4 +124,3 @@ app.get('/api/status', (req, res) => {
 // Démarrage du serveur
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
 console.log("JWT_SECRET:", process.env.JWT_SECRET || "Non défini !");
-
