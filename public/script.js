@@ -350,6 +350,24 @@ async function fetchReferrals() {
     }
 }
 
+function deposit() {
+    console.log("Dépôt en cours...");
+    fetch("https://pon-app.onrender.com/api/deposit", { 
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("token") // Ajoute le token JWT
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Réponse API:", data);
+        alert(data.message || "Dépôt effectué !");
+    })
+    .catch(error => console.error("Erreur API:", error));
+}
+
+
 async function requestReset() {
     const phoneNumber = document.getElementById('phoneNumberReset').value;
     try {
