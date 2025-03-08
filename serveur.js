@@ -7,21 +7,19 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Connexion à MongoDB
 mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log(`✅ Connecté à MongoDB`))
+    .catch(err => console.error(`❌ Erreur MongoDB: ${err.message}`));
 
-.then(() => console.log(`✅ Connecté à MongoDB`))
-.catch(err => console.error(`❌ Erreur MongoDB: ${err.message}`));
-
-// Définition du modèle utilisateur
+// Modèle utilisateur
 const userSchema = new mongoose.Schema({
     phoneNumber: { type: String, unique: true, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true }, // Stocke les mots de passe en clair (⚠ Moins sécurisé)
+    password: { type: String, required: true }, // ⚠ Stocké en clair (pas sécurisé)
     balance: { type: Number, default: 0 },
     depositMade: { type: Boolean, default: false },
     tierLevel: { type: Number, default: 0 },
@@ -34,7 +32,6 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-// Middleware d'authentification
 const authenticate = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
@@ -47,12 +44,11 @@ const authenticate = async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
-        console.error('Erreur JWT:', err.message);
         return res.status(401).json({ error: 'Token invalide ou expiré' });
     }
 };
 
-// Générer un code de parrainage unique
+// Génération du code de parrainage
 const generateReferralCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
 
 // Inscription
@@ -68,70 +64,88 @@ app.post('/api/register', async (req, res) => {
         const user = new User({
             phoneNumber,
             email,
-            password, // Stocke le mot de passe en clair ⚠
+            password,  // ⚠ Stocké en clair
             referralCode: uniqueReferralCode,
-            referralLink: `https://pon-app.onrender.com/register.html?ref=${uniqueReferralCode}`
+            referralLink: `https://pon-app.onrender.com/invite/${uniqueReferralCode}`
         });
         await user.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "7d" });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
         res.json({ token, isAdmin: user.isAdmin, referralLink: user.referralLink });
     } catch (err) {
-        console.error('Erreur inscription:', err);
-        res.status(500).json({ error: 'Erreur serveur lors de l\'inscription' });
+        res.status(500).json({ error: 'Erreur serveur' });
     }
 });
-
-app.get('/invite/:referralCode', (req, res) => {
-    const referralCode = req.params.referralCode;
-    res.redirect(`/register.html?referralCode=${referralCode}`);
-});
-
-//depot
-app.post('/api/deposit', authenticate , async (req, res) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ error: "Utilisateur non authentifié" });
-        }
-
-        req.user.depositMade = true;
-        await req.user.save();
-        res.json({ message: "Dépôt enregistré. Envoie la capture à l'admin pour mise à jour du solde." });
-    } catch (err) {
-        console.error("Erreur dépôt :", err);
-        res.status(500).json({ error: "Erreur serveur lors du dépôt" });
-    }
-    console.log("🔹 Utilisateur authentifié :", req.user);
-});
-
-
 
 // Connexion
 app.post('/api/login', async (req, res) => {
     try {
         const { phoneNumber, password } = req.body;
         const user = await User.findOne({ phoneNumber });
-        if (!user) return res.status(401).json({ error: 'Numéro incorrect' });
-
-        if (user.password !== password) return res.status(401).json({ error: 'Mot de passe incorrect' });
-
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || "7d" });
+        if (!user || user.password !== password) {
+            return res.status(401).json({ error: 'Numéro ou mot de passe incorrect' });
+        }
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
         res.json({ token, isAdmin: user.isAdmin, referralLink: user.referralLink });
     } catch (err) {
-        console.error('Erreur connexion:', err);
-        res.status(500).json({ error: 'Erreur serveur lors de la connexion' });
+        res.status(500).json({ error: 'Erreur serveur' });
     }
 });
 
-// Données utilisateur
+// Redirection des liens de parrainage
+app.get('/invite/:referralCode', (req, res) => {
+    res.redirect(`/register.html?referralCode=${req.params.referralCode}`);
+});
+
+// Dépôt d'argent
+app.post('/api/deposit', authenticate, async (req, res) => {
+    try {
+        const { amount } = req.body;
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ error: "Montant invalide" });
+        }
+
+        req.user.balance += amount;
+        req.user.depositMade = true;
+        await req.user.save();
+
+        res.json({ message: "Dépôt enregistré avec succès !", newBalance: req.user.balance });
+    } catch (err) {
+        console.error("Erreur dépôt :", err);
+        res.status(500).json({ error: "Erreur serveur lors du dépôt" });
+    }
+});
+
+// Retrait d'argent
+app.post('/api/withdraw', authenticate, async (req, res) => {
+    try {
+        const { amount } = req.body;
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ error: "Montant invalide" });
+        }
+        if (req.user.balance < amount) {
+            return res.status(400).json({ error: "Solde insuffisant" });
+        }
+
+        req.user.balance -= amount;
+        await req.user.save();
+
+        res.json({ message: "Retrait effectué avec succès !", newBalance: req.user.balance });
+    } catch (err) {
+        console.error("Erreur retrait :", err);
+        res.status(500).json({ error: "Erreur serveur lors du retrait" });
+    }
+});
+
+// Récupérer les infos de l'utilisateur
 app.get('/api/user', authenticate, async (req, res) => {
     res.json(req.user);
 });
 
-// Route de test
+// Vérifier le statut de l'API
 app.get('/api/status', (req, res) => {
     res.json({ message: "API is running!" });
 });
 
-// Démarrage du serveur
+// Démarrer le serveur
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
