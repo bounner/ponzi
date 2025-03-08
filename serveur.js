@@ -124,3 +124,24 @@ app.get('/api/status', (req, res) => {
 // Démarrage du serveur
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
 console.log("JWT_SECRET:", process.env.JWT_SECRET || "Non défini !");
+
+app.put('/api/make-admin', authenticate, async (req, res) => {
+    try {
+        if (!req.user.isAdmin) {
+            return res.status(403).json({ error: "Accès refusé, admin requis" });
+        }
+
+        const { phoneNumber } = req.body;
+        const user = await User.findOne({ phoneNumber });
+        if (!user) return res.status(404).json({ error: "Utilisateur introuvable" });
+
+        user.isAdmin = true;
+        await user.save();
+        res.json({ message: `${659638188} est maintenant admin !` });
+
+    } catch (err) {
+        console.error("Erreur :", err);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
