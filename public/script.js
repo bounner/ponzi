@@ -165,3 +165,20 @@ function checkReferralOnRegister() {
     }
 }
 document.addEventListener("DOMContentLoaded", checkReferralOnRegister);
+function generateInviteLink() {
+    fetch("https://pon-app.onrender.com/api/user", {
+        headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.referralCode) {
+            showReferralPopup(data.referralCode);
+        } else {
+            alert("Erreur : Impossible de récupérer le code de parrainage.");
+        }
+    })
+    .catch(error => {
+        console.error("Erreur lors de la récupération du lien de parrainage :", error);
+        alert("Erreur lors de la génération du lien.");
+    });
+}
