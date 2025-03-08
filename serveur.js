@@ -111,3 +111,5 @@ app.get('/api/status', (req, res) => {
 
 // Démarrage du serveur
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
+console.log("JWT_SECRET:", process.env.JWT_SECRET || "Non défini !");
+
