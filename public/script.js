@@ -165,6 +165,7 @@ function checkReferralOnRegister() {
     }
 }
 document.addEventListener("DOMContentLoaded", checkReferralOnRegister);
+
 function generateInviteLink() {
     fetch("https://pon-app.onrender.com/api/user", {
         headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
