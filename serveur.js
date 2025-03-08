@@ -81,6 +81,12 @@ app.post('/api/register', async (req, res) => {
         res.status(500).json({ error: 'Erreur serveur lors de l\'inscription' });
     }
 });
+
+app.get('/invite/:referralCode', (req, res) => {
+    const referralCode = req.params.referralCode;
+    res.redirect(`/register.html?referralCode=${referralCode}`);
+});
+
 //depot
 app.post('/api/deposit', authenticate , async (req, res) => {
     try {
