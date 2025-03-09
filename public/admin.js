@@ -99,24 +99,24 @@ async function updateUser() {
 
 
 async function deleteUser(userId) {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
+
     try {
         const res = await fetch('/api/admin/delete', {
             method: 'DELETE',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Authorization': `Bearer ${token}` 
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ userId })
         });
+
         const data = await res.json();
-        alert(data.message);
-        fetchUsers();
+        alert(data.message || "Utilisateur supprimé !");
+        fetchUsers(); // Rafraîchir la liste après suppression
     } catch (err) {
-        alert('Error deleting user');
+        alert("Erreur lors de la suppression");
         console.error(err);
     }
 }
+
 
 async function generateUniqueKey(userId) {
     try {
