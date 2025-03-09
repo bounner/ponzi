@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Dépôts</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Demandes de Dépôt</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Utilisateur</th>
+                <th>Montant</th>
+                <th>Numéro utilisé</th>
+                <th>Numéro destinataire</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="depositsTable">
+            <!-- Les données seront remplies dynamiquement -->
+        </tbody>
+    </table>
+
+    <script src="script.js"></script>
+    <script>
+        function fetchDeposits() {
+            fetch("https://pon-app.onrender.com/api/admin/deposits")
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById("depositsTable");
+                    table.innerHTML = data.map(deposit => `
+                        <tr>
+                            <td>${deposit.phoneNumber}</td>
+                            <td>${deposit.amount} F</td>
+                            <td>${deposit.depositPhoneNumber}</td>
+                            <td>${deposit.destinationNumber}</td>
+                            <td>${deposit.status}</td>
+                            <td>
+                                ${deposit.status === "En attente" ? `<button onclick="confirmDeposit('${deposit._id}')">Confirmer</button>` : "✅ Confirmé"}
+                            </td>
+                        </tr>
+                    `).join('');
+                })
+                .catch(error => console.error("Erreur lors de la récupération des dépôts :", error));
+        }
+
+        function confirmDeposit(depositId) {
+            fetch(`https://pon-app.onrender.com/api/admin/confirm-deposit/${depositId}`, {
+                method: "POST"
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                fetchDeposits();
+            })
+            .catch(error => console.error("Erreur lors de la confirmation :", error));
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchDeposits);
+    </script>
+</body>
+</html>
