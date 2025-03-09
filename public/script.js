@@ -297,11 +297,10 @@ async function login() {
 
         if (data.token) {
             localStorage.setItem("token", data.token);
-            localStorage.setItem("isAdmin", data.isAdmin);
+            localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
             console.log("✅ Token stocké :", localStorage.getItem("token"));
-
-            fetchUserData(); // ✅ Récupérer immédiatement les infos utilisateur après connexion
-
+            
+            fetchUserData(); // ✅ Charger les infos utilisateur après connexion
             window.location.href = "/"; // Rediriger vers la page principale
         } else {
             alert(data.error || "Erreur lors de la connexion");
