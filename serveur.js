@@ -6,6 +6,21 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const authenticate = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) return res.status(401).json({ error: 'Non autorisé - Token manquant' });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+
+        req.user = user;
+        next();
+    } catch (err) {
+        return res.status(401).json({ error: 'Token invalide ou expiré' });
+    }
+};
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -31,22 +46,6 @@ const userSchema = new mongoose.Schema({
     referralLink: String
 });
 const User = mongoose.model('User', userSchema);
-
-const authenticate = async (req, res, next) => {
-    try {
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) return res.status(401).json({ error: 'Non autorisé - Token manquant' });
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
-        if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
-
-        req.user = user;
-        next();
-    } catch (err) {
-        return res.status(401).json({ error: 'Token invalide ou expiré' });
-    }
-};
 
 // Génération du code de parrainage
 const generateReferralCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
