@@ -99,9 +99,9 @@ app.post('/api/buy-tier', authenticate, async (req, res) => {
             return res.status(400).json({ error: "Niveau de palier invalide." });
         }
 
-        // Vérifier si l'utilisateur a déjà ce palier ou un supérieur
-        if (req.user.tierLevel >= tierLevel) {
-            return res.status(400).json({ error: "Vous avez déjà ce palier ou un supérieur." });
+        // Vérifier si l'utilisateur possède déjà ce palier exact
+        if (req.user.tierLevel === tierLevel) {
+            return res.status(400).json({ error: "Vous avez déjà ce palier actif." });
         }
 
         // Définition des prix des paliers
@@ -112,12 +112,12 @@ app.post('/api/buy-tier', authenticate, async (req, res) => {
             return res.status(400).json({ error: "Solde insuffisant pour acheter ce palier." });
         }
 
-        // Déduction du solde et mise à jour du palier
-        req.user.balance -= price;
+        // ✅ Mise à jour du palier : si un palier est déjà actif, il est remplacé
         req.user.tierLevel = tierLevel;
+        req.user.balance -= price;
         await req.user.save();
 
-        res.json({ message: `Palier ${tierLevel} acheté avec succès !`, newBalance: req.user.balance });
+        res.json({ message: `Palier ${tierLevel} activé avec succès !`, newBalance: req.user.balance });
     } catch (err) {
         console.error("Erreur achat palier :", err);
         res.status(500).json({ error: "Erreur serveur lors de l'achat du palier." });
