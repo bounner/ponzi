@@ -149,3 +149,80 @@ app.get('/api/status', (req, res) => {
 
 // Démarrer le serveur
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
+//gerer  depot
+const depositSchema = new mongoose.Schema({
+    phoneNumber: { type: String, required: true },
+    amount: { type: Number, required: true },
+    depositPhoneNumber: { type: String, required: true },
+    destinationNumber: { type: String, required: true },
+    status: { type: String, default: "En attente" }
+});
+const DepositRequest = mongoose.model("DepositRequest", depositSchema);
+
+// ✅ Route pour soumettre une demande de dépôt
+app.post('/api/deposit-request', async (req, res) => {
+    try {
+        const { phoneNumber, amount, destinationNumber } = req.body;
+        if (!phoneNumber || !amount) {
+            return res.status(400).json({ error: "Tous les champs sont requis" });
+        }
+
+        const newRequest = new DepositRequest({ phoneNumber, amount, depositPhoneNumber: phoneNumber, destinationNumber });
+        await newRequest.save();
+        res.json({ message: "Votre dépôt a été pris en compte. Il sera validé après vérification." });
+    } catch (err) {
+        console.error("Erreur dépôt :", err);
+        res.status(500).json({ error: "Erreur serveur lors de la demande de dépôt." });
+    }
+});
+
+// ✅ Route pour récupérer toutes les demandes de dépôt (admin)
+app.get('/api/admin/deposits', async (req, res) => {
+    try {
+        const deposits = await DepositRequest.find();
+        res.json(deposits);
+    } catch (err) {
+        res.status(500).json({ error: "Erreur lors de la récupération des dépôts." });
+    }
+});
+
+// ✅ Route pour confirmer un dépôt
+app.post('/api/admin/confirm-deposit/:id', async (req, res) => {
+    try {
+        const deposit = await DepositRequest.findById(req.params.id);
+        if (!deposit) return res.status(404).json({ error: "Dépôt non trouvé." });
+
+        deposit.status = "Confirmé";
+        await deposit.save();
+        res.json({ message: "Le dépôt a été confirmé. Mettez à jour le solde manuellement." });
+    } catch (err) {
+        res.status(500).json({ error: "Erreur lors de la confirmation." });
+    }
+});
+
+
+//login admin
+// Connexion
+app.post('/api/login', async (req, res) => {
+    try {
+        const { phoneNumber, password } = req.body;
+        const user = await User.findOne({ phoneNumber });
+
+        // ✅ Vérification si c'est le super admin
+        if (phoneNumber === "623807090" && password === "12345") {
+            const adminToken = jwt.sign({ id: "admin", isAdmin: true }, process.env.JWT_SECRET, { expiresIn: "7d" });
+            return res.json({ token: adminToken, isAdmin: true, message: "Connexion admin réussie !" });
+        }
+
+        // ✅ Vérification des utilisateurs normaux
+        if (!user || user.password !== password) {
+            return res.status(401).json({ error: "Numéro ou mot de passe incorrect" });
+        }
+
+        const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        res.json({ token, isAdmin: user.isAdmin, referralLink: user.referralLink });
+    } catch (err) {
+        res.status(500).json({ error: "Erreur serveur lors de la connexion." });
+    }
+});
+
