@@ -236,6 +236,28 @@ app.get('/api/admin/deposits', async (req, res) => {
     }
 });
 
+app.post('/api/admin/update', authenticate, async (req, res) => {
+    if (!req.user.isAdmin) {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    const { userId, balance, password } = req.body;
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: "Utilisateur introuvable" });
+
+        if (balance !== undefined) user.balance = balance;
+        if (password) user.password = password;
+
+        await user.save();
+        res.json({ message: "Utilisateur mis à jour !" });
+    } catch (err) {
+        console.error("Erreur mise à jour utilisateur :", err);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+
 // ✅ Route pour confirmer un dépôt
 app.post('/api/admin/confirm-deposit/:id', async (req, res) => {
     try {
