@@ -3,23 +3,29 @@
 
 console.log('Initial token:', token);
 console.log('Initial isAdmin:', isAdmin);
-
 document.addEventListener("DOMContentLoaded", async function() {
-    console.log('DOMContentLoaded fired, token:', token);
+    console.log('DOMContentLoaded fired, token:', localStorage.getItem("token"));
+    
+    const token = localStorage.getItem("token");
+    const isAdmin = localStorage.getItem("isAdmin") === "true"; // Convertir en booléen
+
     if (!token) {
         console.log('No token found, redirecting to login');
         alert("No session found. Please log in.");
-        window.location.replace("/login.html"); // Use replace to prevent history loop
+        window.location.replace("/login.html");
         return;
     }
-document.addEventListener("DOMContentLoaded", function () {
-    if (localStorage.getItem("isAdmin") === "true") {
+
+    if (isAdmin) {
+        console.log("🔹 Admin connecté, chargement des utilisateurs...");
         fetchUsers();
     } else {
+        console.log("❌ Accès refusé, redirection vers l'accueil");
         alert("Accès refusé !");
         window.location.href = "/index.html";
     }
 });
+
 
 
     try {
