@@ -258,6 +258,30 @@ function submitDepositRequest() {
         alert("Erreur lors de la soumission.");
     });
 }
+async function buyTier(level) {
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/buy-tier", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": `Bearer ${localStorage.getItem("token")}` 
+            },
+            body: JSON.stringify({ tierLevel: level })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Achat du palier réussi !");
+            window.location.reload(); // Rafraîchir la page pour voir la mise à jour
+        } else {
+            alert(data.error || "Erreur lors de l'achat du palier.");
+        }
+    } catch (err) {
+        alert("Erreur lors de l'achat du palier.");
+        console.error(err);
+    }
+}
+
 // cacher ou montrer admin btn
 document.addEventListener("DOMContentLoaded", function() {
     let isAdmin = localStorage.getItem("isAdmin") === "true";
