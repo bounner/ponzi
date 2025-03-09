@@ -183,3 +183,58 @@ function generateInviteLink() {
         alert("Erreur lors de la génération du lien.");
     });
 }
+
+// ✅ Fonction pour afficher le formulaire de dépôt
+function showDepositForm() {
+    const depositForm = document.createElement("div");
+    depositForm.classList.add("popup");
+    depositForm.innerHTML = `
+        <h3>Faire un dépôt</h3>
+        <label>Numéro utilisé pour le dépôt :</label>
+        <input type="text" id="depositPhoneNumber" class="form-control" placeholder="Ex: 691234567" required>
+
+        <label>Montant envoyé :</label>
+        <input type="number" id="depositAmount" class="form-control" placeholder="Ex: 5000" required>
+
+        <label>Numéro où envoyer l'argent :</label>
+        <input type="text" id="destinationNumber" class="form-control" value="677000111" readonly>
+
+        <p class="note">⚠ Envoyez l'argent au numéro indiqué ci-dessus, puis cliquez sur "Soumettre". L'admin vérifiera votre dépôt.</p>
+
+        <button onclick="submitDepositRequest()" class="btn btn-primary">Soumettre</button>
+        <button onclick="closePopup()" class="btn btn-danger">Annuler</button>
+    `;
+    document.body.appendChild(depositForm);
+}
+
+// ✅ Fonction pour fermer la pop-up
+function closePopup() {
+    document.querySelector(".popup").remove();
+}
+
+// ✅ Fonction pour soumettre la demande de dépôt
+function submitDepositRequest() {
+    const phoneNumber = document.getElementById("depositPhoneNumber").value;
+    const amount = document.getElementById("depositAmount").value;
+    const destinationNumber = document.getElementById("destinationNumber").value;
+
+    if (!phoneNumber || !amount) {
+        alert("Veuillez remplir tous les champs !");
+        return;
+    }
+
+    fetch("https://pon-app.onrender.com/api/deposit-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber, amount, destinationNumber })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || "Votre dépôt a été pris en compte !");
+        closePopup();
+    })
+    .catch(error => {
+        console.error("Erreur lors de l'envoi de la demande de dépôt :", error);
+        alert("Erreur lors de la soumission.");
+    });
+}
