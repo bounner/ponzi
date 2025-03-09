@@ -73,6 +73,28 @@ async function fetchReferrals() {
         console.error("Erreur lors de la récupération des parrainages:", err);
     }
 }
+async function fetchDeposits() {
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/admin/deposits", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        const data = await res.json();
+        const tbody = document.getElementById("deposits-list");
+
+        tbody.innerHTML = data.map(deposit => `
+            <tr>
+                <td>${deposit.userPhone}</td>
+                <td>${deposit.userNumber}</td>
+                <td>${deposit.amount} F</td>
+                <td><button class="btn btn-success" onclick="confirmDeposit('${deposit.id}')">Confirmer</button></td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        console.error("Erreur lors de la récupération des dépôts :", err);
+    }
+}
+
 
 
 document.addEventListener("DOMContentLoaded", function() {
