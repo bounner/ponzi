@@ -6,14 +6,30 @@ async function fetchUserData() {
         const res = await fetch("https://pon-app.onrender.com/api/user", {
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
-        if (!res.ok) throw new Error("Erreur lors de la récupération des données utilisateur.");
-        
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
         const data = await res.json();
-        localStorage.setItem("isAdmin", data.isAdmin); // Stocker le rôle admin
+
+        console.log("Données utilisateur reçues :", data);
+
+        // ✅ Vérification des éléments HTML avant de les modifier
+        if (document.getElementById("balance")) {
+            document.getElementById("balance").textContent = data.balance + " F";
+        } else {
+            console.warn("⚠️ L'élément #balance est introuvable dans cette page.");
+        }
+
+        if (document.getElementById("tier-level")) {
+            document.getElementById("tier-level").textContent = 
+                data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
+        } else {
+            console.warn("⚠️ L'élément #tier-level est introuvable dans cette page.");
+        }
     } catch (err) {
-        console.error("Erreur utilisateur :", err);
+        console.error("Erreur lors de la récupération des données :", err);
     }
 }
+
 async function withdraw() {
     const amount = document.getElementById("amount").value;
     const withdrawNumber = document.getElementById("withdrawNumber").value;
