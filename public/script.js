@@ -216,6 +216,30 @@ async function register() {
         alert("Impossible de contacter le serveur.");
     }
 }
+
+//confirm deposite
+async function confirmDeposit(depositId) {
+    if (!confirm("Confirmer ce dépôt ?")) return;
+
+    try {
+        const res = await fetch(`https://pon-app.onrender.com/api/admin/confirm-deposit/${depositId}`, {
+            method: "POST",
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Dépôt confirmé avec succès !");
+            fetchDeposits(); // Rafraîchir la liste après confirmation
+        } else {
+            alert(data.error || "Erreur lors de la confirmation.");
+        }
+    } catch (err) {
+        alert("Erreur serveur.");
+        console.error(err);
+    }
+}
+
 //subbmit
 async function submitDeposit() {
     const amount = document.getElementById("amount").value;
