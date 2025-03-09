@@ -238,3 +238,12 @@ function submitDepositRequest() {
         alert("Erreur lors de la soumission.");
     });
 }
+// cacher ou montrer admin btn
+document.addEventListener("DOMContentLoaded", function() {
+    let isAdmin = localStorage.getItem('isAdmin') === 'true';
+    if (isAdmin) {
+        document.getElementById('admin-btn').style.display = "block"; // Affiche le bouton Admin
+    } else {
+        document.getElementById('admin-btn').style.display = "none"; // Cache le bouton Admin pour les utilisateurs normaux
+    }
+});
