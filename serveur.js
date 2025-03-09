@@ -318,6 +318,7 @@ app.get('/api/referrals', authenticate, async (req, res) => {
 });
 
 
+
         // ✅ Si un code de parrainage est fourni, l'ajouter au parrain
         if (referralCode) {
             const referrer = await User.findOne({ referralCode });
@@ -335,6 +336,21 @@ app.get('/api/referrals', authenticate, async (req, res) => {
         res.status(500).json({ error: 'Erreur serveur lors de l\'inscription' });
     }
 });
+
+app.get('/api/admin/users', authenticate, async (req, res) => {
+    if (!req.user.isAdmin) {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    try {
+        const users = await User.find({}, '-password'); // 🔹 Exclure le mot de passe
+        res.json(users);
+    } catch (err) {
+        console.error("Erreur récupération utilisateurs :", err);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
 console.log("Routes disponibles :");
 console.log(app._router.stack.filter(r => r.route).map(r => r.route.path));
 
