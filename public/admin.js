@@ -12,8 +12,13 @@ document.addEventListener("DOMContentLoaded", async function() {
         window.location.replace("/login.html"); // Use replace to prevent history loop
         return;
     }
-    document.addEventListener("DOMContentLoaded", function () {
-    fetchUsers();
+document.addEventListener("DOMContentLoaded", function () {
+    if (localStorage.getItem("isAdmin") === "true") {
+        fetchUsers();
+    } else {
+        alert("Accès refusé !");
+        window.location.href = "/index.html";
+    }
 });
 
 
@@ -49,34 +54,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 async function fetchUsers() {
     try {
         const res = await fetch('/api/admin/users', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
-
-        const users = await res.json();
-        const tbody = document.getElementById('users');
-
-        tbody.innerHTML = users.map(u => 
-            `<tr>
-                <td>${u._id}</td>
-                <td>${u.phoneNumber}</td>
-                <td>${u.email}</td>
-                <td>${u.balance} F</td>
-                <td>${u.tierLevel > 0 ? 'Palier ' + u.tierLevel : 'Aucun'}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="editUser('${u._id}', '${u.balance}')">Modifier</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">Supprimer</button>
-                </td>
-            </tr>`
-        ).join('');
-    } catch (err) {
-        console.error('Erreur lors de la récupération des utilisateurs:', err);
-    }
-}
-
-async function fetchUsers() {
-    try {
-        const res = await fetch('/api/admin/users', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
         });
 
@@ -86,7 +63,6 @@ async function fetchUsers() {
         console.log("✅ Utilisateurs récupérés :", users);
 
         const tbody = document.getElementById('users');
-
         tbody.innerHTML = users.map(u => 
             `<tr>
                 <td>${u._id}</td>
@@ -104,6 +80,7 @@ async function fetchUsers() {
         console.error('Erreur lors de la récupération des utilisateurs:', err);
     }
 }
+
 
 
 function editUser(id, balance) {
