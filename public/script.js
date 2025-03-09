@@ -1,35 +1,6 @@
 let token = localStorage.getItem('token');
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-async function fetchUserData() {
-    try {
-        const res = await fetch("https://pon-app.onrender.com/api/user", {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-        });
-
-        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
-        const data = await res.json();
-
-        console.log("Données utilisateur reçues :", data);
-
-        // ✅ Vérification des éléments HTML avant de les modifier
-        if (document.getElementById("balance")) {
-            document.getElementById("balance").textContent = data.balance + " F";
-        } else {
-            console.warn("⚠️ L'élément #balance est introuvable dans cette page.");
-        }
-
-        if (document.getElementById("tier-level")) {
-            document.getElementById("tier-level").textContent = 
-                data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
-        } else {
-            console.warn("⚠️ L'élément #tier-level est introuvable dans cette page.");
-        }
-    } catch (err) {
-        console.error("Erreur lors de la récupération des données :", err);
-    }
-}
-
 async function withdraw() {
     const amount = document.getElementById("amount").value;
     const withdrawNumber = document.getElementById("withdrawNumber").value;
@@ -463,6 +434,30 @@ async function fetchUserData() {
     }
 }
 
+async function fetchUserData() {
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/user", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
+        const data = await res.json();
+
+        console.log("Données utilisateur reçues :", data);
+
+        // ✅ Vérifier si l'élément existe avant de modifier son texte
+        if (document.getElementById("balance")) {
+            document.getElementById("balance").textContent = data.balance + " F";
+        }
+
+        if (document.getElementById("tier-level")) {
+            document.getElementById("tier-level").textContent = 
+                data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
+        }
+    } catch (err) {
+        console.error("Erreur lors de la récupération des données :", err);
+    }
+}
 
 
 // cacher ou montrer admin btn
