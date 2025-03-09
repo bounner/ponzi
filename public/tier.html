@@ -9,24 +9,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="fetchUserData()">
     <a href="index.html" class="home-icon"><i class="fas fa-home"></i> Accueil</a>
     <a href="javascript:history.back()" class="back-icon"><i class="fas fa-arrow-left"></i> Retour</a>
+    
     <div class="container mt-5">
         <div class="card mx-auto">
             <div class="card-body text-center">
                 <h1><i class="fas fa-star"></i> Acheter Palier</h1>
-                <p>Solde actuel : <span id="balance">0 F</span></p>
+                <p>Solde actuel : <span id="balance">Chargement...</span> F</p>
+                <p>Palier actif : <span id="tier-level">Chargement...</span></p>
+
                 <div class="row g-3">
-                    <div class="col-12"><button onclick="buyTier(1)" class="btn btn-warning w-100">Palier 1 - 5000F (750F/jour)</button></div>
-                    <div class="col-12"><button onclick="buyTier(2)" class="btn btn-warning w-100">Palier 2 - 10000F (1500F/jour)</button></div>
-                    <div class="col-12"><button onclick="buyTier(3)" class="btn btn-warning w-100">Palier 3 - 15000F (2250F/jour)</button></div>
-                    <div class="col-12"><button onclick="buyTier(4)" class="btn btn-warning w-100">Palier 4 - 20000F (3000F/jour)</button></div>
-                    <div class="col-12"><button onclick="buyTier(5)" class="btn btn-warning w-100">Palier 5 - 25000F (3750F/jour)</button></div>
+                    <div class="col-12"><button id="tier1" onclick="buyTier(1)" class="btn btn-warning w-100">Palier 1 - 5000F (750F/jour)</button></div>
+                    <div class="col-12"><button id="tier2" onclick="buyTier(2)" class="btn btn-warning w-100">Palier 2 - 10000F (1500F/jour)</button></div>
+                    <div class="col-12"><button id="tier3" onclick="buyTier(3)" class="btn btn-warning w-100">Palier 3 - 15000F (2250F/jour)</button></div>
+                    <div class="col-12"><button id="tier4" onclick="buyTier(4)" class="btn btn-warning w-100">Palier 4 - 20000F (3000F/jour)</button></div>
+                    <div class="col-12"><button id="tier5" onclick="buyTier(5)" class="btn btn-warning w-100">Palier 5 - 25000F (3750F/jour)</button></div>
                 </div>
             </div>
         </div>
     </div>
+    
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
