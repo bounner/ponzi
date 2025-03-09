@@ -28,36 +28,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 
 
-    try {
-        const res = await fetch('/api/user', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        console.log('API Response Status:', res.status);
-        if (!res.ok) {
-            throw new Error(`Invalid token - Status: ${res.status}`);
-        }
-        const userData = await res.json();
-        console.log('User data:', userData);
-        isAdmin = userData.isAdmin;
-        localStorage.setItem('isAdmin', isAdmin.toString()); // Ensure string value
-        console.log('Updated isAdmin:', isAdmin);
-
-        if (!isAdmin) {
-            console.log('Not an admin, redirecting to home');
-            alert("Access denied! You must be an administrator.");
-            window.location.replace("/index.html"); // Redirect to home, not login
-        } else {
-            fetchUsers();
-        }
-    } catch (err) {
-        console.error('Token validation error:', err.message);
-        alert("Session expired or invalid. Please log in again.");
-        localStorage.clear(); // Clear all to reset state
-        window.location.replace("/login.html");
-    }
-});
-
-async function fetchUsers() {
+   async function fetchUsers() { // ✅ `async` ajouté ici
     try {
         const res = await fetch('/api/admin/users', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
@@ -86,7 +57,6 @@ async function fetchUsers() {
         console.error('Erreur lors de la récupération des utilisateurs:', err);
     }
 }
-
 
 
 function editUser(id, balance) {
