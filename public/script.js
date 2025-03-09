@@ -1,6 +1,20 @@
 let token = localStorage.getItem('token');
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
+async function fetchUserData() {
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/user", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+        if (!res.ok) throw new Error("Erreur lors de la récupération des données utilisateur.");
+        
+        const data = await res.json();
+        localStorage.setItem("isAdmin", data.isAdmin); // Stocker le rôle admin
+    } catch (err) {
+        console.error("Erreur utilisateur :", err);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     if (token) {
         fetchUserData();
@@ -79,7 +93,7 @@ async function register() {
     const referralCode = document.getElementById("referralCode")?.value || null;
 
     if (password !== confirmPassword) {
-        alert("Les mots de passe ne correspondent pas");
+        alert("Les mots de passe ne correspondent pas !");
         return;
     }
 
@@ -90,10 +104,12 @@ async function register() {
             body: JSON.stringify({ phoneNumber, email, password, referralCode })
         });
         const data = await res.json();
+
         if (data.token) {
             localStorage.setItem("token", data.token);
+            localStorage.setItem("isAdmin", data.isAdmin); // Stocker le rôle admin
             alert("Inscription réussie !");
-            window.location.href = "/index.html";
+            window.location.href = "/index.html"; // Rediriger après inscription
         } else {
             alert("Erreur : " + data.error);
         }
@@ -102,6 +118,7 @@ async function register() {
         alert("Erreur lors de l'inscription.");
     }
 }
+
 
 // ✅ Fonction de connexion
 async function login() {
@@ -115,10 +132,12 @@ async function login() {
             body: JSON.stringify({ phoneNumber, password })
         });
         const data = await res.json();
+
         if (data.token) {
             localStorage.setItem("token", data.token);
             localStorage.setItem("isAdmin", data.isAdmin);
-            window.location.href = "/";
+            alert("Connexion réussie !");
+            window.location.href = "/index.html"; // Redirection après connexion
         } else {
             alert(data.error || "Erreur lors de la connexion");
         }
@@ -127,6 +146,7 @@ async function login() {
         console.error(err);
     }
 }
+
 
 // ✅ Fonction pour effectuer un dépôt
 function deposit() {
@@ -240,10 +260,11 @@ function submitDepositRequest() {
 }
 // cacher ou montrer admin btn
 document.addEventListener("DOMContentLoaded", function() {
-    let isAdmin = localStorage.getItem('isAdmin') === 'true';
-    if (isAdmin) {
-        document.getElementById('admin-btn').style.display = "block"; // Affiche le bouton Admin
-    } else {
-        document.getElementById('admin-btn').style.display = "none"; // Cache le bouton Admin pour les utilisateurs normaux
+    let isAdmin = localStorage.getItem("isAdmin") === "true";
+    let adminBtn = document.getElementById("admin-btn");
+
+    if (adminBtn) {
+        adminBtn.style.display = isAdmin ? "block" : "none";
     }
 });
+
