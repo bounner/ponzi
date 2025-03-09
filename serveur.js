@@ -285,4 +285,7 @@ app.get('/api/referrals', authenticate, async (req, res) => {
         res.status(500).json({ error: 'Erreur serveur lors de l\'inscription' });
     }
 });
+console.log("Routes disponibles :");
+console.log(app._router.stack.filter(r => r.route).map(r => r.route.path));
+
 
