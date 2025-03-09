@@ -123,6 +123,17 @@ function copyReferralLink() {
     const button = document.querySelector(".popup button");
     button.innerText = "✅ Copié !";
     button.disabled = true;
+
+    // ✅ Fermer la pop-up après 1 seconde
+    setTimeout(() => {
+        closePopup();
+    }, 1000);
+}
+
+// ✅ Fonction pour fermer la pop-up
+function closePopup() {
+    const popup = document.querySelector(".popup");
+    if (popup) popup.remove();
 }
 
 // ✅ Fonction d'inscription
@@ -214,18 +225,27 @@ function logout() {
     window.location.href = "/login.html";
 }
 
-function checkReferralOnRegister() {
-    const pathParts = window.location.pathname.split('/');
-    if (pathParts[1] === "invite" && pathParts[2]) {
-        const referralCode = pathParts[2];
-        console.log("Code de parrainage détecté :", referralCode);
-        const referralInput = document.getElementById("referralCode");
-        if (referralInput) {
-            referralInput.value = referralCode;
-        }
-    }
+function copyReferralLink() {
+    const input = document.getElementById("referralLink");
+    input.select();
+    document.execCommand("copy");
+
+    const button = document.querySelector(".popup button");
+    button.innerText = "✅ Copié !";
+    button.disabled = true;
+
+    // ✅ Fermer la pop-up après 1 seconde
+    setTimeout(() => {
+        closePopup();
+    }, 1000);
 }
-document.addEventListener("DOMContentLoaded", checkReferralOnRegister);
+
+// ✅ Fonction pour fermer la pop-up
+function closePopup() {
+    const popup = document.querySelector(".popup");
+    if (popup) popup.remove();
+}
+
 
 function generateInviteLink() {
     fetch("https://pon-app.onrender.com/api/user", {
