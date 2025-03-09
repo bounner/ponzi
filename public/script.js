@@ -14,6 +14,47 @@ async function fetchUserData() {
         console.error("Erreur utilisateur :", err);
     }
 }
+async function withdraw() {
+    const amount = document.getElementById("amount").value;
+    const withdrawNumber = document.getElementById("withdrawNumber").value;
+    const withdrawMethod = document.getElementById("withdrawMethod").value;
+
+    if (!amount || amount <= 0) {
+        alert("Veuillez entrer un montant valide !");
+        return;
+    }
+
+    if (!withdrawNumber) {
+        alert("Veuillez entrer un numéro de retrait !");
+        return;
+    }
+
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/withdraw", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": `Bearer ${localStorage.getItem("token")}` 
+            },
+            body: JSON.stringify({ 
+                amount: parseFloat(amount),
+                withdrawNumber,
+                withdrawMethod 
+            })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Retrait effectué avec succès !");
+            window.location.reload(); // Rafraîchir la page après un retrait réussi
+        } else {
+            alert(data.error || "Erreur lors du retrait.");
+        }
+    } catch (err) {
+        alert("Erreur lors du retrait.");
+        console.error(err);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     if (token) {
