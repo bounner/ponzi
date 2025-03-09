@@ -373,6 +373,23 @@ app.get('/api/admin/users', authenticate, async (req, res) => {
     }
 });
 
+app.delete('/api/admin/delete', authenticate, async (req, res) => {
+    if (!req.user.isAdmin) {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    const { userId } = req.body;
+    try {
+        const user = await User.findByIdAndDelete(userId);
+        if (!user) return res.status(404).json({ error: "Utilisateur introuvable" });
+
+        res.json({ message: "Utilisateur supprimé avec succès !" });
+    } catch (err) {
+        console.error("Erreur suppression utilisateur :", err);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
 console.log("Routes disponibles :");
 console.log(app._router.stack.filter(r => r.route).map(r => r.route.path));
 
