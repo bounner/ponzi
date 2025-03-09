@@ -252,10 +252,11 @@ app.post('/api/admin/confirm-deposit/:id', async (req, res) => {
 
 
 //login admin
+
 async function createAdminIfNotExists() {
     try {
-        const adminPhone = "623807090"; // 📌 Numéro admin par défaut
-        const adminPassword = "12345";  // 📌 Mot de passe admin par défaut
+        const adminPhone = "623807090"; // 📌 Numéro admin
+        const adminPassword = "12345";  // 📌 Mot de passe admin
 
         let admin = await User.findOne({ phoneNumber: adminPhone });
 
@@ -263,23 +264,29 @@ async function createAdminIfNotExists() {
             admin = new User({
                 phoneNumber: adminPhone,
                 email: "admin@example.com",
-                password: adminPassword, // ⚠ Stocké en clair (ajoute du hash si besoin)
+                password: adminPassword,
                 isAdmin: true,
                 balance: 999999
             });
 
             await admin.save();
             console.log("✅ Admin créé avec succès !");
+        } else if (!admin.isAdmin) {
+            // ✅ Si l'admin existe mais n'est pas admin, on le met à jour !
+            admin.isAdmin = true;
+            await admin.save();
+            console.log("✅ Admin mis à jour en admin !");
         } else {
-            console.log("ℹ️ L'admin existe déjà.");
+            console.log("ℹ️ L'admin existe déjà et est bien admin.");
         }
     } catch (err) {
-        console.error("❌ Erreur lors de la création de l'admin :", err);
+        console.error("❌ Erreur lors de la création/mise à jour de l'admin :", err);
     }
 }
 
-// Exécuter la création de l'admin après connexion à MongoDB
+// Exécuter après connexion MongoDB
 mongoose.connection.once("open", createAdminIfNotExists);
+
 
 // Connexion
 app.post('/api/register', async (req, res) => {
