@@ -1,4 +1,4 @@
-const token = localStorage.getItem("token"); // ✅ Déclarer une seule fois
+//const token = localStorage.getItem("token"); // ✅ Déclarer une seule fois
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 console.log('Initial token:', token);
