@@ -64,6 +64,26 @@ function editUser(id, balance) {
     document.getElementById('balance').value = balance;
 }
 
+async function deleteUser(userId) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
+
+    try {
+        const res = await fetch('/api/admin/delete', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            body: JSON.stringify({ userId })
+        });
+
+        const data = await res.json();
+        alert(data.message || "Utilisateur supprimé !");
+        fetchUsers(); // Rafraîchir la liste après suppression
+    } catch (err) {
+        alert("Erreur lors de la suppression");
+        console.error(err);
+    }
+}
+
+
 async function updateUser() {
     const userId = document.getElementById('userId').value;
     const balance = document.getElementById('balance').value;
@@ -85,25 +105,6 @@ async function updateUser() {
     }
 }
 
-
-async function deleteUser(userId) {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
-
-    try {
-        const res = await fetch('/api/admin/delete', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ userId })
-        });
-
-        const data = await res.json();
-        alert(data.message || "Utilisateur supprimé !");
-        fetchUsers(); // Rafraîchir la liste après suppression
-    } catch (err) {
-        alert("Erreur lors de la suppression");
-        console.error(err);
-    }
-}
 
 
 async function generateUniqueKey(userId) {
