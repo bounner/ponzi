@@ -207,6 +207,43 @@ async function register() {
         alert("Impossible de contacter le serveur.");
     }
 }
+//subbmit
+async function submitDeposit() {
+    const amount = document.getElementById("amount").value;
+    const userNumber = document.getElementById("user-number").value;
+
+    if (!amount || amount <= 0) {
+        alert("Veuillez entrer un montant valide !");
+        return;
+    }
+
+    if (!userNumber) {
+        alert("Veuillez entrer le numéro utilisé pour le dépôt !");
+        return;
+    }
+
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/deposit", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": `Bearer ${localStorage.getItem("token")}` 
+            },
+            body: JSON.stringify({ amount, userNumber })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Dépôt enregistré avec succès !");
+            window.location.reload(); // Rafraîchir la page après dépôt
+        } else {
+            alert(data.error || "Erreur lors du dépôt.");
+        }
+    } catch (err) {
+        alert("Erreur serveur lors du dépôt.");
+        console.error(err);
+    }
+}
 
 
 
