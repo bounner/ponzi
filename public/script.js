@@ -221,8 +221,8 @@ async function submitDeposit() {
 
         const data = await res.json();
         if (res.ok) {
-            alert(data.message || "Dépôt enregistré avec succès !");
-            window.location.reload(); // Rafraîchir la page après dépôt
+            alert(data.message || "Votre demande de dépôt a été envoyée !");
+            window.location.href = "/admin-deposits.html"; // Rediriger vers la page d'admin
         } else {
             alert(data.error || "Erreur lors du dépôt.");
         }
