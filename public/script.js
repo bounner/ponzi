@@ -384,12 +384,25 @@ async function fetchUserData() {
         if (!res.ok) throw new Error("Erreur lors de la récupération des données");
         const data = await res.json();
 
-        document.getElementById("tier-level").textContent = 
-            data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
+        // ✅ Mettre à jour le solde
+        document.getElementById("balance").textContent = data.balance;
+
+        // ✅ Mettre à jour le palier actif
+        const tierLevel = data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
+        document.getElementById("tier-level").textContent = tierLevel;
+
+        // ✅ Désactiver le bouton du palier actuel
+        for (let i = 1; i <= 5; i++) {
+            const button = document.getElementById(`tier${i}`);
+            if (button) {
+                button.disabled = (i === data.tierLevel);
+            }
+        }
     } catch (err) {
         console.error("Erreur lors de la récupération des données :", err);
     }
 }
+
 
 
 // cacher ou montrer admin btn
