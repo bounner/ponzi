@@ -291,18 +291,23 @@ async function login() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phoneNumber, password })
         });
+
         const data = await res.json();
+        console.log("Données après login :", data);
 
         if (data.token) {
             localStorage.setItem("token", data.token);
             localStorage.setItem("isAdmin", data.isAdmin);
-            alert("Connexion réussie !");
-            window.location.href = "/index.html"; // Redirection après connexion
+            console.log("✅ Token stocké :", localStorage.getItem("token"));
+
+            fetchUserData(); // ✅ Récupérer immédiatement les infos utilisateur après connexion
+
+            window.location.href = "/"; // Rediriger vers la page principale
         } else {
             alert(data.error || "Erreur lors de la connexion");
         }
     } catch (err) {
-        alert("Erreur lors de la connexion");
+        alert("Erreur lors de la connexion.");
         console.error(err);
     }
 }
