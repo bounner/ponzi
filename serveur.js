@@ -92,6 +92,40 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+app.post('/api/buy-tier', authenticate, async (req, res) => {
+    try {
+        const { tierLevel } = req.body;
+
+        if (!tierLevel || tierLevel < 1 || tierLevel > 5) {
+            return res.status(400).json({ error: "Niveau de palier invalide." });
+        }
+
+        // Vérifier si l'utilisateur a déjà ce palier ou un supérieur
+        if (req.user.tierLevel >= tierLevel) {
+            return res.status(400).json({ error: "Vous avez déjà ce palier ou un supérieur." });
+        }
+
+        // Définition des prix des paliers
+        const tierPrices = { 1: 5000, 2: 10000, 3: 15000, 4: 20000, 5: 25000 };
+        const price = tierPrices[tierLevel];
+
+        if (req.user.balance < price) {
+            return res.status(400).json({ error: "Solde insuffisant pour acheter ce palier." });
+        }
+
+        // Déduction du solde et mise à jour du palier
+        req.user.balance -= price;
+        req.user.tierLevel = tierLevel;
+        await req.user.save();
+
+        res.json({ message: `Palier ${tierLevel} acheté avec succès !`, newBalance: req.user.balance });
+    } catch (err) {
+        console.error("Erreur achat palier :", err);
+        res.status(500).json({ error: "Erreur serveur lors de l'achat du palier." });
+    }
+});
+
+
 // Redirection des liens de parrainage
 app.get('/invite/:referralCode', (req, res) => {
     res.redirect(`/register.html?referralCode=${req.params.referralCode}`);
