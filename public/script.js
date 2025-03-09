@@ -55,6 +55,31 @@ async function withdraw() {
         console.error(err);
     }
 }
+async function fetchReferrals() {
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/referrals", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        const data = await res.json();
+        const tbody = document.getElementById("referrals");
+        
+        if (tbody) {
+            tbody.innerHTML = data.referrals.map(r => 
+                `<tr>
+                    <td>${r.phoneNumber}</td>
+                    <td>${r.deposit} F</td>
+                    <td>${new Date(r.date).toLocaleDateString()}</td>
+                </tr>`
+            ).join('');
+        }
+        
+        document.getElementById("referral-earnings").textContent = `${data.referralEarnings} F`;
+    } catch (err) {
+        console.error("Erreur lors de la récupération des parrainages:", err);
+    }
+}
+
 
 document.addEventListener("DOMContentLoaded", function() {
     if (token) {
