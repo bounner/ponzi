@@ -5,7 +5,6 @@ console.log('Initial token:', token);
 console.log('Initial isAdmin:', isAdmin);
 
 document.addEventListener("DOMContentLoaded", async function() {
-    fetchUsers();
     console.log('DOMContentLoaded fired, token:', token);
     if (!token) {
         console.log('No token found, redirecting to login');
@@ -13,6 +12,10 @@ document.addEventListener("DOMContentLoaded", async function() {
         window.location.replace("/login.html"); // Use replace to prevent history loop
         return;
     }
+    document.addEventListener("DOMContentLoaded", function () {
+    fetchUsers();
+});
+
 
     try {
         const res = await fetch('/api/user', {
