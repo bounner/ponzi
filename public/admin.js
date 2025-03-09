@@ -77,24 +77,26 @@ function editUser(id, balance) {
 }
 
 async function updateUser() {
-    console.log('updateUser called');
     const userId = document.getElementById('userId').value;
     const balance = document.getElementById('balance').value;
-    const generateKey = document.getElementById('generate-key')?.checked;
+    const password = document.getElementById('password').value;
+
     try {
         const res = await fetch('/api/admin/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ userId, balance: parseFloat(balance), generateKey })
+            body: JSON.stringify({ userId, balance: parseFloat(balance), password })
         });
+
         const data = await res.json();
-        alert(data.message);
-        fetchUsers();
+        alert(data.message || "Mise à jour réussie !");
+        fetchUsers(); // Rafraîchir la liste après modification
     } catch (err) {
-        alert('Error updating user');
+        alert("Erreur lors de la mise à jour");
         console.error(err);
     }
 }
+
 
 async function deleteUser(userId) {
     if (!confirm("Are you sure you want to delete this user?")) return;
