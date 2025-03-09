@@ -458,45 +458,23 @@ async function buyTier(level) {
 
 //afficher palier
 async function fetchUserData() {
-    try {
-        const res = await fetch("https://pon-app.onrender.com/api/user", {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-        });
-
-        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
-        const data = await res.json();
-
-        // ✅ Mettre à jour le solde
-        document.getElementById("balance").textContent = data.balance;
-
-        // ✅ Mettre à jour le palier actif
-        const tierLevel = data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
-        document.getElementById("tier-level").textContent = tierLevel;
-
-        // ✅ Désactiver le bouton du palier actuel
-        for (let i = 1; i <= 5; i++) {
-            const button = document.getElementById(`tier${i}`);
-            if (button) {
-                button.disabled = (i === data.tierLevel);
-            }
-        }
-    } catch (err) {
-        console.error("Erreur lors de la récupération des données :", err);
+    const token = localStorage.getItem("token");
+    if (!token) {
+        console.warn("⚠️ Aucun token trouvé. L'utilisateur est considéré comme déconnecté.");
+        return;
     }
-}
 
-async function fetchUserData() {
     try {
         const res = await fetch("https://pon-app.onrender.com/api/user", {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error("Erreur lors de la récupération des données");
         const data = await res.json();
 
-        console.log("Données utilisateur reçues :", data);
+        console.log("✅ Données utilisateur récupérées :", data);
 
-        // ✅ Vérifier si l'élément existe avant de modifier son texte
+        // ✅ Vérifier si les éléments existent avant de les modifier
         if (document.getElementById("balance")) {
             document.getElementById("balance").textContent = data.balance + " F";
         }
@@ -505,8 +483,21 @@ async function fetchUserData() {
             document.getElementById("tier-level").textContent = 
                 data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
         }
+
+        // ✅ Désactiver le bouton du palier actif
+        for (let i = 1; i <= 5; i++) {
+            const button = document.getElementById(`tier${i}`);
+            if (button) {
+                button.disabled = (i === data.tierLevel);
+            }
+        }
+
+        if (document.getElementById("ref-link")) {
+            document.getElementById("ref-link").textContent = data.referralLink || "Non connecté";
+        }
+
     } catch (err) {
-        console.error("Erreur lors de la récupération des données :", err);
+        console.error("❌ Erreur lors de la récupération des données utilisateur :", err);
     }
 }
 
