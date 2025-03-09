@@ -47,34 +47,29 @@ async function fetchUsers() {
         const res = await fetch('/api/admin/users', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!res.ok) throw new Error("Error fetching users");
+        if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
+
         const users = await res.json();
         const tbody = document.getElementById('users');
+
         tbody.innerHTML = users.map(u => 
             `<tr>
-                <td><i class="fas fa-id-badge"></i> ${u._id}</td>
-                <td><i class="fas fa-user"></i> ${u.username}</td>
-                <td><i class="fas fa-wallet"></i> ${u.balance} $</td>
-                <td><i class="fas fa-key"></i> ${u.withdrawalKey || 'Not generated'}</td>
+                <td>${u._id}</td>
+                <td>${u.phoneNumber}</td>
+                <td>${u.email}</td>
+                <td>${u.balance} F</td>
+                <td>${u.tierLevel > 0 ? 'Palier ' + u.tierLevel : 'Aucun'}</td>
                 <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-sm btn-primary" onclick="editUser('${u._id}', '${u.balance}')">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                        <button class="btn btn-sm btn-warning" onclick="generateUniqueKey('${u._id}')">
-                            <i class="fas fa-key"></i> Generate Key
-                        </button>
-                    </div>
+                    <button class="btn btn-sm btn-primary" onclick="editUser('${u._id}', '${u.balance}')">Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">Supprimer</button>
                 </td>
             </tr>`
         ).join('');
     } catch (err) {
-        console.error('Error fetching users:', err);
+        console.error('Erreur lors de la récupération des utilisateurs:', err);
     }
 }
+
 
 function editUser(id, balance) {
     document.getElementById('userId').value = id;
