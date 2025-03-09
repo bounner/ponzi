@@ -152,12 +152,14 @@ app.post('/api/deposit', authenticate, async (req, res) => {
 // Retrait d'argent
 app.post('/api/withdraw', authenticate, async (req, res) => {
     try {
-        const { amount } = req.body;
+        const { amount, withdrawNumber, withdrawMethod } = req.body;
+
         if (!amount || amount <= 0) {
-            return res.status(400).json({ error: "Montant invalide" });
+            return res.status(400).json({ error: "Montant invalide." });
         }
+
         if (req.user.balance < amount) {
-            return res.status(400).json({ error: "Solde insuffisant" });
+            return res.status(400).json({ error: "Solde insuffisant." });
         }
 
         req.user.balance -= amount;
@@ -166,9 +168,10 @@ app.post('/api/withdraw', authenticate, async (req, res) => {
         res.json({ message: "Retrait effectué avec succès !", newBalance: req.user.balance });
     } catch (err) {
         console.error("Erreur retrait :", err);
-        res.status(500).json({ error: "Erreur serveur lors du retrait" });
+        res.status(500).json({ error: "Erreur serveur lors du retrait." });
     }
 });
+
 
 // Récupérer les infos de l'utilisateur
 app.get('/api/user', authenticate, async (req, res) => {
