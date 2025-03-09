@@ -363,8 +363,8 @@ async function buyTier(level) {
 
         const data = await res.json();
         if (res.ok) {
-            alert(data.message || "Achat du palier réussi !");
-            window.location.reload(); // Rafraîchir la page pour voir la mise à jour
+            alert(data.message || "Palier activé avec succès !");
+            window.location.reload(); // Rafraîchir la page après achat
         } else {
             alert(data.error || "Erreur lors de l'achat du palier.");
         }
@@ -373,6 +373,24 @@ async function buyTier(level) {
         console.error(err);
     }
 }
+
+//afficher palier
+async function fetchUserData() {
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/user", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
+        const data = await res.json();
+
+        document.getElementById("tier-level").textContent = 
+            data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
+    } catch (err) {
+        console.error("Erreur lors de la récupération des données :", err);
+    }
+}
+
 
 // cacher ou montrer admin btn
 document.addEventListener("DOMContentLoaded", function() {
