@@ -239,26 +239,50 @@ app.post('/api/admin/confirm-deposit/:id', async (req, res) => {
 
 //login admin
 // Connexion
-app.post('/api/login', async (req, res) => {
+app.post('/api/register', async (req, res) => {
     try {
-        const { phoneNumber, password } = req.body;
-        const user = await User.findOne({ phoneNumber });
+        const { phoneNumber, email, password, referralCode } = req.body;
+        if (!phoneNumber || !email || !password) return res.status(400).json({ error: 'Tous les champs sont requis' });
 
-        // ✅ Vérification si c'est le super admin
-        if (phoneNumber === "623807090" && password === "12345") {
-            const adminToken = jwt.sign({ id: "admin", isAdmin: true }, process.env.JWT_SECRET, { expiresIn: "7d" });
-            return res.json({ token: adminToken, isAdmin: true, message: "Connexion admin réussie !" });
+        const existingUser = await User.findOne({ phoneNumber });
+        if (existingUser) return res.status(400).json({ error: 'Utilisateur déjà inscrit' });
+
+        // Générer un code de parrainage unique
+        const uniqueReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        
+        // Créer le nouvel utilisateur
+        const user = new User({
+            phoneNumber,
+            email,
+            password,  // ⚠ Stocké en clair (à sécuriser)
+            referralCode: uniqueReferralCode,
+            referralLink: `https://pon-app.onrender.com/register.html?ref=${uniqueReferralCode}`
+        });
+app.get('/api/referrals', authenticate, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("referrals referralEarnings");
+        res.json({ referrals: user.referrals, referralEarnings: user.referralEarnings });
+    } catch (err) {
+        res.status(500).json({ error: "Erreur lors de la récupération des parrainages." });
+    }
+});
+
+
+        // ✅ Si un code de parrainage est fourni, l'ajouter au parrain
+        if (referralCode) {
+            const referrer = await User.findOne({ referralCode });
+            if (referrer) {
+                referrer.referrals.push({ phoneNumber, deposit: 0, date: new Date() });
+                await referrer.save();
+            }
         }
 
-        // ✅ Vérification des utilisateurs normaux
-        if (!user || user.password !== password) {
-            return res.status(401).json({ error: "Numéro ou mot de passe incorrect" });
-        }
+        await user.save();
 
-        const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: "7d" });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
         res.json({ token, isAdmin: user.isAdmin, referralLink: user.referralLink });
     } catch (err) {
-        res.status(500).json({ error: "Erreur serveur lors de la connexion." });
+        res.status(500).json({ error: 'Erreur serveur lors de l\'inscription' });
     }
 });
 
