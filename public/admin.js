@@ -1,5 +1,5 @@
 //const token = localStorage.getItem("token"); // ✅ Déclarer une seule fois
-let isAdmin = localStorage.getItem('isAdmin') === 'true';
+//let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 console.log('Initial token:', token);
 console.log('Initial isAdmin:', isAdmin);
