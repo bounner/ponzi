@@ -70,6 +70,37 @@ async function fetchUsers() {
     }
 }
 
+async function fetchUsers() {
+    try {
+        const res = await fetch('/api/admin/users', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
+
+        const users = await res.json();
+        console.log("✅ Utilisateurs récupérés :", users);
+
+        const tbody = document.getElementById('users');
+
+        tbody.innerHTML = users.map(u => 
+            `<tr>
+                <td>${u._id}</td>
+                <td>${u.phoneNumber}</td>
+                <td>${u.email}</td>
+                <td>${u.balance} F</td>
+                <td>${u.tierLevel > 0 ? 'Palier ' + u.tierLevel : 'Aucun'}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="editUser('${u._id}', '${u.balance}')">Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">Supprimer</button>
+                </td>
+            </tr>`
+        ).join('');
+    } catch (err) {
+        console.error('Erreur lors de la récupération des utilisateurs:', err);
+    }
+}
+
 
 function editUser(id, balance) {
     document.getElementById('userId').value = id;
