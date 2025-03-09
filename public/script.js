@@ -55,6 +55,13 @@ async function withdraw() {
         console.error(err);
     }
 }
+function copyDepositNumber() {
+    const depositNumber = document.getElementById("deposit-number").textContent;
+    navigator.clipboard.writeText(depositNumber).then(() => {
+        alert("Numéro copié : " + depositNumber);
+    }).catch(err => console.error("Erreur lors de la copie :", err));
+}
+
 async function fetchReferrals() {
     try {
         const res = await fetch("https://pon-app.onrender.com/api/referrals", {
