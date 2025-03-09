@@ -175,8 +175,15 @@ app.post('/api/withdraw', authenticate, async (req, res) => {
 
 // Récupérer les infos de l'utilisateur
 app.get('/api/user', authenticate, async (req, res) => {
+    console.log("✅ Requête reçue pour récupérer l'utilisateur :", req.user);
+    
+    if (!req.user) {
+        return res.status(401).json({ error: "Utilisateur non authentifié" });
+    }
+
     res.json(req.user);
 });
+
 
 // Vérifier le statut de l'API
 app.get('/api/status', (req, res) => {
