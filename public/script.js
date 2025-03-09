@@ -163,6 +163,8 @@ function closePopup() {
 
 // ✅ Fonction d'inscription
 async function register() {
+    console.log("Tentative d'inscription..."); // ✅ Vérifier si la fonction est bien appelée
+
     const phoneNumber = document.getElementById("phoneNumber").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -175,26 +177,30 @@ async function register() {
     }
 
     try {
+        console.log("Envoi de la requête à l'API...");
         const res = await fetch("https://pon-app.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phoneNumber, email, password, referralCode })
         });
-        const data = await res.json();
 
-        if (data.token) {
+        console.log("Réponse reçue :", res);
+        const data = await res.json();
+        
+        if (res.ok) {
             localStorage.setItem("token", data.token);
-            localStorage.setItem("isAdmin", data.isAdmin); // Stocker le rôle admin
+            localStorage.setItem("isAdmin", data.isAdmin);
             alert("Inscription réussie !");
-            window.location.href = "/index.html"; // Rediriger après inscription
+            window.location.href = "/index.html";
         } else {
-            alert("Erreur : " + data.error);
+            alert("Erreur : " + (data.error || "Inscription échouée"));
         }
     } catch (err) {
-        console.error("Erreur API:", err);
-        alert("Erreur lors de l'inscription.");
+        console.error("Erreur API :", err);
+        alert("Impossible de contacter le serveur.");
     }
 }
+
 
 
 // ✅ Fonction de connexion
