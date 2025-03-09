@@ -81,15 +81,22 @@ app.post('/api/login', async (req, res) => {
     try {
         const { phoneNumber, password } = req.body;
         const user = await User.findOne({ phoneNumber });
-        if (!user || user.password !== password) {
-            return res.status(401).json({ error: 'Numéro ou mot de passe incorrect' });
-        }
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+        if (!user) return res.status(401).json({ error: 'Numéro incorrect' });
+
+        if (user.password !== password) return res.status(401).json({ error: 'Mot de passe incorrect' });
+
+        const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+        console.log(`🔹 Connexion réussie : ${user.phoneNumber} (Admin: ${user.isAdmin})`);
+
         res.json({ token, isAdmin: user.isAdmin, referralLink: user.referralLink });
     } catch (err) {
-        res.status(500).json({ error: 'Erreur serveur' });
+        console.error('Erreur connexion:', err);
+        res.status(500).json({ error: 'Erreur serveur lors de la connexion' });
     }
 });
+
 
 app.post('/api/buy-tier', authenticate, async (req, res) => {
     try {
@@ -245,6 +252,35 @@ app.post('/api/admin/confirm-deposit/:id', async (req, res) => {
 
 
 //login admin
+async function createAdminIfNotExists() {
+    try {
+        const adminPhone = "623807090"; // 📌 Numéro admin par défaut
+        const adminPassword = "12345";  // 📌 Mot de passe admin par défaut
+
+        let admin = await User.findOne({ phoneNumber: adminPhone });
+
+        if (!admin) {
+            admin = new User({
+                phoneNumber: adminPhone,
+                email: "admin@example.com",
+                password: adminPassword, // ⚠ Stocké en clair (ajoute du hash si besoin)
+                isAdmin: true,
+                balance: 999999
+            });
+
+            await admin.save();
+            console.log("✅ Admin créé avec succès !");
+        } else {
+            console.log("ℹ️ L'admin existe déjà.");
+        }
+    } catch (err) {
+        console.error("❌ Erreur lors de la création de l'admin :", err);
+    }
+}
+
+// Exécuter la création de l'admin après connexion à MongoDB
+mongoose.connection.once("open", createAdminIfNotExists);
+
 // Connexion
 app.post('/api/register', async (req, res) => {
     try {
