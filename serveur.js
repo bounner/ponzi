@@ -268,6 +268,28 @@ const depositRequestSchema = new mongoose.Schema({
 
 const DepositRequest = mongoose.model("DepositRequest", depositRequestSchema);
 
+app.post('/api/deposit-request', authenticate, async (req, res) => {
+    try {
+        const { amount } = req.body;
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ error: "Montant invalide" });
+        }
+
+        const depositRequest = new DepositRequest({
+            userId: req.user._id,
+            phoneNumber: req.user.phoneNumber,
+            amount
+        });
+
+        await depositRequest.save();
+        res.json({ message: "Demande de dépôt soumise avec succès." });
+    } catch (err) {
+        console.error("Erreur dépôt :", err);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+
 
 // ✅ Route pour confirmer un dépôt
 app.post('/api/admin/confirm-deposit/:id', async (req, res) => {
