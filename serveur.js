@@ -209,6 +209,21 @@ const depositSchema = new mongoose.Schema({
 });
 const DepositRequest = mongoose.model("DepositRequest", depositSchema);
 
+app.get('/api/admin/deposit-requests', authenticate, async (req, res) => {
+    if (!req.user.isAdmin) {
+        return res.status(403).json({ error: "Accès refusé" });
+    }
+
+    try {
+        const deposits = await DepositRequest.find().sort({ date: -1 });
+        res.json(deposits);
+    } catch (err) {
+        console.error("Erreur récupération dépôts :", err);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+
 // ✅ Route pour soumettre une demande de dépôt
 app.post('/api/deposit-request', async (req, res) => {
     try {
