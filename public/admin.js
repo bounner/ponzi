@@ -64,6 +64,41 @@ function editUser(id, balance) {
     document.getElementById('balance').value = balance;
 }
 
+async function fetchDepositRequests() {
+    try {
+        const res = await fetch('/api/admin/deposit-requests', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération des demandes");
+
+        const deposits = await res.json();
+        const tbody = document.getElementById('deposit-requests');
+
+        tbody.innerHTML = deposits.map(d => 
+            `<tr>
+                <td>${d.phoneNumber}</td>
+                <td>${d.amount} F</td>
+                <td>${new Date(d.date).toLocaleString()}</td>
+                <td id="status-${d._id}">${d.status === "confirmed" ? "✅ Confirmé" : "⏳ En attente"}</td>
+                <td>
+                    <button class="btn ${d.status === "confirmed" ? "btn-success" : "btn-warning"}"
+                        onclick="confirmDeposit('${d._id}')" 
+                        id="btn-${d._id}">
+                        ${d.status === "confirmed" ? "Confirmé ✅" : "Confirmer"}
+                    </button>
+                </td>
+            </tr>`
+        ).join('');
+    } catch (err) {
+        console.error("Erreur récupération des dépôts :", err);
+    }
+}
+
+// Charger les demandes au chargement de la page
+document.addEventListener("DOMContentLoaded", fetchDepositRequests);
+
+
 async function deleteUser(userId) {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
 
