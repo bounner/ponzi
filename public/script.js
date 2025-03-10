@@ -58,29 +58,21 @@ async function updateUser() {
         console.error(err);
     }
 }
-
+//retrait
 async function withdraw() {
-    const amount = document.getElementById("amount").value;
-    const withdrawNumber = document.getElementById("withdrawNumber").value;
-    const withdrawMethod = document.getElementById("withdrawMethod").value;
-
-    if (!amount || amount <= 0) {
-        alert("Veuillez entrer un montant valide !");
-        return;
-    }
+    const amount = document.getElementById('amount').value;
+    const withdrawNumber = document.getElementById('withdrawNumber').value;
+    const withdrawMethod = document.getElementById('withdrawMethod').value;
 
     if (!withdrawNumber) {
-        alert("Veuillez entrer un numéro de retrait !");
+        alert('Veuillez entrer un numéro de retrait.');
         return;
     }
 
     try {
-        const res = await fetch("https://pon-app.onrender.com/api/withdraw", {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json", 
-                "Authorization": `Bearer ${localStorage.getItem("token")}` 
-            },
+        const res = await fetch('https://pon-app.onrender.com/api/withdraw', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("token")}` },
             body: JSON.stringify({ 
                 amount: parseFloat(amount),
                 withdrawNumber,
@@ -89,17 +81,22 @@ async function withdraw() {
         });
 
         const data = await res.json();
-        if (res.ok) {
-            alert(data.message || "Retrait effectué avec succès !");
-            window.location.reload(); // Rafraîchir la page après un retrait réussi
-        } else {
-            alert(data.error || "Erreur lors du retrait.");
+
+        if (!res.ok) {
+            alert(data.error || 'Erreur lors du retrait');
+            return;
         }
+
+        alert(data.message);
+        fetchUserData(); // Mettre à jour l'affichage du solde après le retrait
+
     } catch (err) {
-        alert("Erreur lors du retrait.");
+        alert('Erreur lors du retrait');
         console.error(err);
     }
 }
+
+//cpt depo num
 function copyDepositNumber() {
     const depositNumber = document.getElementById("deposit-number").textContent;
     navigator.clipboard.writeText(depositNumber).then(() => {
