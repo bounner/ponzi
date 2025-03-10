@@ -316,6 +316,36 @@ app.post('/api/deposit-request', authenticate, async (req, res) => {
         res.status(500).json({ error: "Erreur serveur" });
     }
 });
+ //daily gain
+app.post('/api/daily-gain', authenticate, async (req, res) => {
+    try {
+        if (req.user.tierLevel === 0) {
+            return res.status(400).json({ error: "Vous devez avoir un palier actif pour réclamer un gain." });
+        }
+
+        const now = new Date();
+        const lastGain = req.user.lastDailyGain ? new Date(req.user.lastDailyGain) : null;
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        if (lastGain && now - lastGain < oneDay) {
+            return res.status(400).json({ error: "Vous devez attendre 24h avant de réclamer à nouveau." });
+        }
+
+        // Définition des gains par palier
+        const dailyGains = { 1: 750, 2: 1500, 3: 2250, 4: 3000, 5: 3750 };
+        const gain = dailyGains[req.user.tierLevel] || 0;
+
+        req.user.balance += gain;
+        req.user.lastDailyGain = now;
+        await req.user.save();
+
+        res.json({ message: `Gain de ${gain}F ajouté à votre solde.` });
+
+    } catch (err) {
+        console.error("Erreur lors de la réclamation du gain :", err);
+        res.status(500).json({ error: "Erreur serveur lors de la réclamation du gain." });
+    }
+});
 
 
 
