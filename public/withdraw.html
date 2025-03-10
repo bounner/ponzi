@@ -12,29 +12,39 @@
 <body>
     <a href="index.html" class="home-icon"><i class="fas fa-home"></i> Accueil</a>
     <a href="javascript:history.back()" class="back-icon"><i class="fas fa-arrow-left"></i> Retour</a>
+
     <div class="container mt-5">
-        <h1 class="text-center">Retrait</h1>
-        <div class="card mt-4">
+        <div class="card mx-auto" style="max-width: 400px;">
             <div class="card-body">
+                <h1 class="text-center">💰 Faire un Retrait</h1>
+                <p>Solde actuel : <span id="balance">0 F</span></p>
+
+                <p id="withdraw-warning" class="text-danger" style="display: none;">⚠️ Solde insuffisant (minimum 7000F requis)</p>
+
                 <div class="mb-3">
-                    <label for="amount" class="form-label">Montant (minimum 7000 F)</label>
-                    <input type="number" id="amount" class="form-control" placeholder="Entrez le montant">
+                    <label for="amount" class="form-label">Montant à retirer</label>
+                    <input type="number" id="amount" class="form-control" placeholder="Ex: 10000">
                 </div>
+
                 <div class="mb-3">
                     <label for="withdrawNumber" class="form-label">Numéro de retrait</label>
-                    <input type="text" id="withdrawNumber" class="form-control" placeholder="Ex: 237 6XX XXX XXX">
+                    <input type="text" id="withdrawNumber" class="form-control" placeholder="Ex: 623XXXXXX">
                 </div>
+
                 <div class="mb-3">
                     <label for="withdrawMethod" class="form-label">Méthode de retrait</label>
-                    <select id="withdrawMethod" class="form-select">
-                        <option value="MTN">MTN Mobile Money</option>
-                        <option value="Orange">Orange Money</option>
+                    <select id="withdrawMethod" class="form-control">
+                        <option value="Orange Money">Orange Money</option>
+                        <option value="MTN Mobile Money">MTN Mobile Money</option>
+                        <option value="PayPal">PayPal</option>
                     </select>
                 </div>
-                <button onclick="withdraw()" class="btn btn-danger w-100"><i class="fas fa-money-bill-wave"></i> Demander Retrait</button>
+
+                <button id="withdraw-btn" onclick="withdraw()" class="btn btn-danger w-100">💰 Faire un retrait</button>
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
