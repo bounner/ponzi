@@ -153,6 +153,73 @@ async function fetchDeposits() {
     }
 }
 
+async function fetchMiningData() {
+    try {
+        const res = await fetch('https://pon-app.onrender.com/api/user', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
+        const data = await res.json();
+
+        console.log("✅ Données de minage récupérées :", data);
+
+        if (document.getElementById("tier-level")) {
+            document.getElementById("tier-level").textContent = 
+                data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
+        }
+
+        if (document.getElementById("daily-gain")) {
+            const dailyGains = [750, 1500, 2250, 3000, 3750]; // Gains en fonction du palier
+            const dailyGain = data.tierLevel > 0 ? dailyGains[data.tierLevel - 1] : 0;
+            document.getElementById("daily-gain").textContent = `${dailyGain} F`;
+        }
+
+        if (document.getElementById("time-remaining")) {
+            const now = new Date();
+            const lastGain = data.lastDailyGain ? new Date(data.lastDailyGain) : null;
+            let timeRemaining = "Disponible maintenant";
+
+            if (lastGain) {
+                const timeSinceLastGain = now - lastGain;
+                const oneDay = 24 * 60 * 60 * 1000;
+                if (timeSinceLastGain < oneDay) {
+                    const remainingMs = oneDay - timeSinceLastGain;
+                    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+                    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                    timeRemaining = `${hours}h ${minutes}m`;
+                    document.getElementById("claim-btn").disabled = true;
+                } else {
+                    document.getElementById("claim-btn").disabled = false;
+                }
+            } else {
+                document.getElementById("claim-btn").disabled = data.tierLevel === 0;
+            }
+            document.getElementById("time-remaining").textContent = timeRemaining;
+        }
+
+    } catch (err) {
+        console.error("❌ Erreur lors de la récupération des données de minage :", err);
+    }
+}
+
+async function claimDailyGain() {
+    try {
+        const res = await fetch('https://pon-app.onrender.com/api/daily-gain', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            body: JSON.stringify({})
+        });
+
+        const data = await res.json();
+        alert(data.message || data.error);
+        fetchMiningData(); // ✅ Mettre à jour les infos de minage après réclamation
+    } catch (err) {
+        alert("Erreur lors de la réclamation du gain");
+        console.error("❌ Erreur lors de la réclamation du gain :", err);
+    }
+}
+
 
 
 document.addEventListener("DOMContentLoaded", function() {
