@@ -1,24 +1,18 @@
-//const token = localStorage.getItem("token"); // ✅ Déclarer une seule fois
-//let isAdmin = localStorage.getItem('isAdmin') === 'true';
-
-console.log('Initial token:', token);
-console.log('Initial isAdmin:', isAdmin);
-document.addEventListener("DOMContentLoaded", async function() {
-    console.log('DOMContentLoaded fired, token:', localStorage.getItem("token"));
-    
-    const isAdmin = localStorage.getItem("isAdmin") === "true"; // Convertir en booléen
-    const token = localStorage.getItem("token");
+// ✅ Récupérer le token et vérifier l'accès admin
+const token = localStorage.getItem("token");
+const isAdmin = localStorage.getItem("isAdmin") === "true"; // Convertir en booléen
 
 if (!token) {
     alert("Accès refusé. Veuillez vous connecter.");
     window.location.href = "/login.html"; // Redirige vers la connexion si pas connecté
 }
 
-
-   
+// ✅ Vérifier si l'utilisateur est admin
+document.addEventListener("DOMContentLoaded", function () {
     if (isAdmin) {
         console.log("🔹 Admin connecté, chargement des utilisateurs...");
         fetchUsers();
+        fetchDepositRequests(); // Charger les requêtes de dépôt
     } else {
         console.log("❌ Accès refusé, redirection vers l'accueil");
         alert("Accès refusé !");
@@ -26,12 +20,11 @@ if (!token) {
     }
 });
 
-
-
-   async function fetchUsers() { // ✅ `async` ajouté ici
+// ✅ Récupérer la liste des utilisateurs
+async function fetchUsers() {
     try {
         const res = await fetch('/api/admin/users', {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+            headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
@@ -58,15 +51,11 @@ if (!token) {
     }
 }
 
-
-function editUser(id, balance) {
-    document.getElementById('userId').value = id;
-    document.getElementById('balance').value = balance;
-}
+// ✅ Récupérer la liste des demandes de dépôt
 async function fetchDepositRequests() {
     try {
         const res = await fetch('/api/admin/deposit-requests', {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+            headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error("Erreur lors de la récupération des requêtes");
@@ -94,35 +83,20 @@ async function fetchDepositRequests() {
     }
 }
 
-// Fonction pour marquer une requête comme "Confirmée"
-async function confirmDeposit(depositId) {
-    try {
-        document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
-        document.getElementById(`btn-${depositId}`).classList.remove("btn-warning");
-        document.getElementById(`btn-${depositId}`).classList.add("btn-success");
-        document.getElementById(`btn-${depositId}`).textContent = "Confirmé ✅";
-        document.getElementById(`btn-${depositId}`).disabled = true;
-    } catch (err) {
-        console.error("Erreur confirmation dépôt :", err);
-        alert("Erreur lors de la confirmation.");
-    }
+// ✅ Modifier un utilisateur (pré-remplir les champs)
+function editUser(id, balance) {
+    document.getElementById('userId').value = id;
+    document.getElementById('balance').value = balance;
 }
 
-// Charger les requêtes au chargement de la page
-document.addEventListener("DOMContentLoaded", fetchDepositRequests);
-
-
-// Charger les demandes au chargement de la page
-document.addEventListener("DOMContentLoaded", fetchDepositRequests);
-
-
+// ✅ Supprimer un utilisateur
 async function deleteUser(userId) {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
 
     try {
         const res = await fetch('/api/admin/delete', {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ userId })
         });
 
@@ -135,7 +109,7 @@ async function deleteUser(userId) {
     }
 }
 
-
+// ✅ Mettre à jour le solde d'un utilisateur
 async function updateUser() {
     const userId = document.getElementById('userId').value;
     const balance = document.getElementById('balance').value;
@@ -157,8 +131,7 @@ async function updateUser() {
     }
 }
 
-
-
+// ✅ Générer une clé unique pour un utilisateur
 async function generateUniqueKey(userId) {
     try {
         const res = await fetch('/api/admin/generate-key', {
@@ -173,14 +146,14 @@ async function generateUniqueKey(userId) {
         alert(data.message + "\nKey: " + data.key);
         fetchUsers();
     } catch (err) {
-        alert('Error generating key');
+        alert('Erreur lors de la génération de la clé');
         console.error(err);
     }
 }
 
+// ✅ Confirmer une requête de dépôt
 async function confirmDeposit(depositId) {
     try {
-        // Mettre à jour visuellement le bouton et le statut
         document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
         document.getElementById(`btn-${depositId}`).classList.remove("btn-warning");
         document.getElementById(`btn-${depositId}`).classList.add("btn-success");
