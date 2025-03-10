@@ -165,19 +165,32 @@ app.post('/api/withdraw', authenticate, async (req, res) => {
             return res.status(400).json({ error: "Montant invalide." });
         }
 
-        if (req.user.balance < amount) {
-            return res.status(400).json({ error: "Solde insuffisant." });
+        if (!withdrawNumber) {
+            return res.status(400).json({ error: "Numéro de retrait requis." });
         }
 
+        // Vérifier si le solde est suffisant
+        if (req.user.balance < amount) {
+            return res.status(400).json({ error: "Solde insuffisant pour ce retrait." });
+        }
+
+        // Vérifier si le solde minimum de 7000F est atteint
+        if (req.user.balance < 7000) {
+            return res.status(400).json({ error: "Vous devez avoir au moins 7000F pour effectuer un retrait." });
+        }
+
+        // Déduction du solde après validation
         req.user.balance -= amount;
         await req.user.save();
 
-        res.json({ message: "Retrait effectué avec succès !", newBalance: req.user.balance });
+        res.json({ message: "Votre demande de retrait a été enregistrée. Attendez la confirmation." });
+
     } catch (err) {
         console.error("Erreur retrait :", err);
         res.status(500).json({ error: "Erreur serveur lors du retrait." });
     }
 });
+
 
 
 // Récupérer les infos de l'utilisateur
