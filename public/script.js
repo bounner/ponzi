@@ -200,23 +200,28 @@ async function fetchMiningData() {
     }
 }
 
+
+//claimdailygain
 async function claimDailyGain() {
     try {
-        const res = await fetch('https://pon-app.onrender.com/api/daily-gain', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("token")}` },
-            body: JSON.stringify({})
+        const res = await fetch("https://pon-app.onrender.com/api/daily-gain", {
+            method: "POST",
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
 
         const data = await res.json();
-        alert(data.message || data.error);
-        fetchMiningData(); // ✅ Mettre à jour les infos de minage après réclamation
+
+        if (!res.ok) {
+            alert(data.error || "Erreur lors de la réclamation du gain");
+            return;
+        }
+
+        alert(data.message);
+        fetchUserData(); // Met à jour le solde après le gain
     } catch (err) {
-        alert("Erreur lors de la réclamation du gain");
         console.error("❌ Erreur lors de la réclamation du gain :", err);
     }
 }
-
 
 
 document.addEventListener("DOMContentLoaded", function() {
