@@ -160,3 +160,17 @@ async function generateUniqueKey(userId) {
         console.error(err);
     }
 }
+
+async function confirmDeposit(depositId) {
+    try {
+        // Mettre à jour visuellement le bouton et le statut
+        document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
+        document.getElementById(`btn-${depositId}`).classList.remove("btn-warning");
+        document.getElementById(`btn-${depositId}`).classList.add("btn-success");
+        document.getElementById(`btn-${depositId}`).textContent = "Confirmé ✅";
+        document.getElementById(`btn-${depositId}`).disabled = true;
+    } catch (err) {
+        console.error("Erreur confirmation dépôt :", err);
+        alert("Erreur lors de la confirmation.");
+    }
+}
