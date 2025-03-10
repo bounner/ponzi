@@ -3,84 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin</title>
+    <title>Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <style>
-        .table-responsive {
-            overflow-x: auto;
-        }
-        .btn-sm {
-            margin: 2px;
-            padding: 5px 10px;
-        }
-        @media (max-width: 768px) {
-            .card {
-                margin: 10px 0;
-            }
-            .form-label {
-                font-size: 0.9rem;
-            }
-            .btn {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            th, td {
-                font-size: 0.85rem;
-            }
-        }
-        @media (max-width: 576px) {
-            .table {
-                font-size: 0.8rem;
-            }
-            .btn-sm {
-                display: block;
-                width: 100%;
-            }
-        }
-    </style>
 </head>
 <body>
-    <a href="index.html" class="home-icon"><i class="fas fa-home"></i> Accueil</a>
-    <a href="javascript:history.back()" class="back-icon"><i class="fas fa-arrow-left"></i> Retour</a>
-    <div class="container mt-5" id="admin-panel">
-        <h1 class="text-center">Panel Admin</h1>
-        <div class="table-responsive">
-            <table class="table table-dark table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Numéro</th>
-                        <th>Email</th>
-                        <th>Solde</th>
-                        <th>Palier</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="users"></tbody>
-            </table>
+    <div class="container mt-5">
+        <h1 class="text-center">📊 Panneau d'Administration</h1>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> Accueil</a>
+            <button onclick="logout()" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
         </div>
+
         <div class="card mt-4">
             <div class="card-body">
-                <h3>Modifier Utilisateur</h3>
-                <input type="hidden" id="userId">
-                <div class="mb-3">
-                    <label for="balance" class="form-label">Solde</label>
-                    <input type="number" id="balance" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Nouveau Mot de Passe</label>
-                    <input type="text" id="password" class="form-control">
-                </div>
-                <button onclick="updateUser()" class="btn btn-primary w-100"><i class="fas fa-save"></i> Sauvegarder</button>
+                <h2>📜 Gestion des Utilisateurs</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Numéro</th>
+                            <th>Email</th>
+                            <th>Solde</th>
+                            <th>Palier</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2>📜 Requêtes des Dépôts</h2>
+                <a href="admin-deposits.html" class="btn btn-secondary">📜 Voir les Requêtes</a>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script> 
-<script src="admin.js"></script> <!-- ✅ Chargé en dernier pour que fetchUsers() soit bien défini -->
 
+    <script src="admin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
