@@ -3,33 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Vérification des Dépôts</title>
+    <title>Requêtes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body onload="fetchDeposits()">
-    <a href="index.html" class="home-icon"><i class="fas fa-home"></i> Accueil</a>
-    <a href="javascript:history.back()" class="back-icon"><i class="fas fa-arrow-left"></i> Retour</a>
+<body>
+    <a href="admin.html" class="home-icon"><i class="fas fa-arrow-left"></i> Retour au Panel Admin</a>
 
     <div class="container mt-5">
-        <h1 class="text-center">Vérification des Dépôts</h1>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Utilisateur</th>
-                    <th>Numéro</th>
-                    <th>Montant</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="deposits-list">
-                <!-- Les demandes de dépôt seront affichées ici -->
-            </tbody>
-        </table>
+        <div class="card">
+            <div class="card-body">
+                <h1 class="text-center">📜 Requêtes des utilisateurs</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Numéro</th>
+                            <th>Montant</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deposit-requests"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
+    <script src="admin.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
