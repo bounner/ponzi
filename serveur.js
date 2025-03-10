@@ -220,7 +220,7 @@ const depositSchema = new mongoose.Schema({
     destinationNumber: { type: String, required: true },
     status: { type: String, default: "En attente" }
 });
-const DepositRequest = mongoose.model("DepositRequest", depositSchema);
+//const DepositRequest = mongoose.model("DepositRequest", depositSchema);
 
 app.get('/api/admin/deposit-requests', authenticate, async (req, res) => {
     if (!req.user.isAdmin) {
