@@ -6,16 +6,16 @@ console.log('Initial isAdmin:', isAdmin);
 document.addEventListener("DOMContentLoaded", async function() {
     console.log('DOMContentLoaded fired, token:', localStorage.getItem("token"));
     
-    const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true"; // Convertir en booléen
+    const token = localStorage.getItem("token");
 
-    if (!token) {
-        console.log('No token found, redirecting to login');
-        alert("No session found. Please log in.");
-        window.location.replace("/login.html");
-        return;
-    }
+if (!token) {
+    alert("Accès refusé. Veuillez vous connecter.");
+    window.location.href = "/login.html"; // Redirige vers la connexion si pas connecté
+}
 
+
+   
     if (isAdmin) {
         console.log("🔹 Admin connecté, chargement des utilisateurs...");
         fetchUsers();
