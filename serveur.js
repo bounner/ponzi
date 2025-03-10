@@ -257,6 +257,17 @@ app.post('/api/admin/update', authenticate, async (req, res) => {
     }
 });
 
+//deposite request
+const depositRequestSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    phoneNumber: { type: String, required: true }, 
+    amount: { type: Number, required: true },
+    date: { type: Date, default: Date.now },
+    status: { type: String, default: "pending" } // "pending" ou "confirmed"
+});
+
+const DepositRequest = mongoose.model("DepositRequest", depositRequestSchema);
+
 
 // ✅ Route pour confirmer un dépôt
 app.post('/api/admin/confirm-deposit/:id', async (req, res) => {
