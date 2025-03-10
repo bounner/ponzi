@@ -339,6 +339,35 @@ async function register() {
     }
 }
 
+//cacher si solde
+async function checkWithdrawEligibility() {
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/user", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération du solde");
+        const data = await res.json();
+
+        const withdrawBtn = document.getElementById("withdraw-btn");
+        const withdrawWarning = document.getElementById("withdraw-warning");
+
+        if (data.balance < 7000) {
+            withdrawBtn.disabled = true;
+            withdrawWarning.style.display = "block";
+        } else {
+            withdrawBtn.disabled = false;
+            withdrawWarning.style.display = "none";
+        }
+    } catch (err) {
+        console.error("Erreur vérification solde retrait :", err);
+    }
+}
+
+// Vérifier le solde au chargement de la page
+document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
+
+
 //confirm deposite
 async function confirmDeposit(depositId) {
     if (!confirm("Confirmer ce dépôt ?")) return;
