@@ -63,14 +63,13 @@ function editUser(id, balance) {
     document.getElementById('userId').value = id;
     document.getElementById('balance').value = balance;
 }
-
 async function fetchDepositRequests() {
     try {
         const res = await fetch('/api/admin/deposit-requests', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
         });
 
-        if (!res.ok) throw new Error("Erreur lors de la récupération des demandes");
+        if (!res.ok) throw new Error("Erreur lors de la récupération des requêtes");
 
         const deposits = await res.json();
         const tbody = document.getElementById('deposit-requests');
@@ -91,9 +90,27 @@ async function fetchDepositRequests() {
             </tr>`
         ).join('');
     } catch (err) {
-        console.error("Erreur récupération des dépôts :", err);
+        console.error("Erreur récupération des requêtes :", err);
     }
 }
+
+// Fonction pour marquer une requête comme "Confirmée"
+async function confirmDeposit(depositId) {
+    try {
+        document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
+        document.getElementById(`btn-${depositId}`).classList.remove("btn-warning");
+        document.getElementById(`btn-${depositId}`).classList.add("btn-success");
+        document.getElementById(`btn-${depositId}`).textContent = "Confirmé ✅";
+        document.getElementById(`btn-${depositId}`).disabled = true;
+    } catch (err) {
+        console.error("Erreur confirmation dépôt :", err);
+        alert("Erreur lors de la confirmation.");
+    }
+}
+
+// Charger les requêtes au chargement de la page
+document.addEventListener("DOMContentLoaded", fetchDepositRequests);
+
 
 // Charger les demandes au chargement de la page
 document.addEventListener("DOMContentLoaded", fetchDepositRequests);
