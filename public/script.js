@@ -352,17 +352,24 @@ async function checkWithdrawEligibility() {
         const withdrawBtn = document.getElementById("withdraw-btn");
         const withdrawWarning = document.getElementById("withdraw-warning");
 
-        if (data.balance < 7000) {
-            withdrawBtn.disabled = true;
-            withdrawWarning.style.display = "block";
-        } else {
-            withdrawBtn.disabled = false;
-            withdrawWarning.style.display = "none";
+        if (withdrawBtn && withdrawWarning) {  // Vérifie que les éléments existent
+            if (data.balance < 7000) {
+                withdrawBtn.disabled = true;
+                withdrawWarning.style.display = "block";
+            } else {
+                withdrawBtn.disabled = false;
+                withdrawWarning.style.display = "none";
+            }
         }
     } catch (err) {
         console.error("Erreur vérification solde retrait :", err);
     }
 }
+
+// Vérifier le solde au chargement de la page
+document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
+
+
 
 // Vérifier le solde au chargement de la page
 document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
