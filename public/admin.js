@@ -7,6 +7,46 @@ if (!token) {
     window.location.href = "/login.html"; // Redirige vers la connexion si pas connecté
 }
 
+// ✅ Récupérer la liste des utilisateurs
+
+async function fetchUsers() {
+    try {
+        const res = await fetch('/api/admin/users', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
+
+        const users = await res.json();
+        console.log("✅ Utilisateurs récupérés :", users);
+
+        const tbody = document.getElementById('users');
+
+        // ✅ Vérifier si l'élément existe avant de modifier son `innerHTML`
+        if (!tbody) {
+            console.error("❌ L'élément #users est introuvable dans admin.html !");
+            return;
+        }
+
+        tbody.innerHTML = users.map(u => 
+            `<tr>
+                <td>${u._id}</td>
+                <td>${u.phoneNumber}</td>
+                <td>${u.email}</td>
+                <td>${u.balance} F</td>
+                <td>${u.tierLevel > 0 ? 'Palier ' + u.tierLevel : 'Aucun'}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="editUser('${u._id}', '${u.balance}')">Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">Supprimer</button>
+                </td>
+            </tr>`
+        ).join('');
+    } catch (err) {
+        console.error('Erreur lors de la récupération des utilisateurs:', err);
+    }
+}
+
+
 // ✅ Vérifier si l'utilisateur est admin
 document.addEventListener("DOMContentLoaded", function () {
     if (isAdmin) {
@@ -35,37 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1000); // ✅ Attendre un peu que la table se charge
 });
 
-
-// ✅ Récupérer la liste des utilisateurs
-async function fetchUsers() {
-    try {
-        const res = await fetch('/api/admin/users', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
-
-        const users = await res.json();
-        console.log("✅ Utilisateurs récupérés :", users);
-
-        const tbody = document.getElementById('users');
-        tbody.innerHTML = users.map(u => 
-            `<tr>
-                <td>${u._id}</td>
-                <td>${u.phoneNumber}</td>
-                <td>${u.email}</td>
-                <td>${u.balance} F</td>
-                <td>${u.tierLevel > 0 ? 'Palier ' + u.tierLevel : 'Aucun'}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="editUser('${u._id}', '${u.balance}')">Modifier</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteUser('${u._id}')">Supprimer</button>
-                </td>
-            </tr>`
-        ).join('');
-    } catch (err) {
-        console.error('Erreur lors de la récupération des utilisateurs:', err);
-    }
-}
 
 // ✅ Récupérer la liste des demandes de dépôt
 async function fetchDepositRequests() {
