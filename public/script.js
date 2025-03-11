@@ -405,41 +405,34 @@ async function confirmDeposit(depositId) {
 
 //subbmit
 async function submitDeposit() {
-    const amount = document.getElementById("amount").value;
-    const userNumber = document.getElementById("user-number").value;
+    const amount = document.getElementById("depositAmount").value;
+    const depositNumber = document.getElementById("depositNumber").value;
 
-    if (!amount || amount <= 0) {
-        alert("Veuillez entrer un montant valide !");
-        return;
-    }
-
-    if (!userNumber) {
-        alert("Veuillez entrer le numéro utilisé pour le dépôt !");
+    if (!amount || !depositNumber) {
+        alert("Veuillez remplir tous les champs !");
         return;
     }
 
     try {
-        const res = await fetch("https://pon-app.onrender.com/api/deposit", {
-            method: "POST",
+        const res = await fetch('/api/deposit', {
+            method: 'POST',
             headers: { 
-                "Content-Type": "application/json", 
-                "Authorization": `Bearer ${localStorage.getItem("token")}` 
+                'Content-Type': 'application/json', 
+                'Authorization': `Bearer ${localStorage.getItem("token")}` 
             },
-            body: JSON.stringify({ amount, userNumber })
+            body: JSON.stringify({ amount, depositNumber })
         });
 
         const data = await res.json();
-        if (res.ok) {
-            alert(data.message || "Votre demande de dépôt a été envoyée !");
-            window.location.href = "/admin-deposits.html"; // Rediriger vers la page d'admin
-        } else {
-            alert(data.error || "Erreur lors du dépôt.");
-        }
+        alert(data.message || "Votre dépôt a été pris en compte. Votre solde sera mis à jour après validation par l'admin.");
+
+        // ✅ NE PAS modifier le solde ici (seul l'admin doit le faire)
     } catch (err) {
-        alert("Erreur serveur lors du dépôt.");
+        alert("Erreur lors de la soumission du dépôt.");
         console.error(err);
     }
 }
+
 
 
 
