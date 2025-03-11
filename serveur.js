@@ -140,21 +140,31 @@ app.get('/invite/:referralCode', (req, res) => {
 // Dépôt d'argent
 app.post('/api/deposit', authenticate, async (req, res) => {
     try {
-        const { amount } = req.body;
-        if (!amount || amount <= 0) {
-            return res.status(400).json({ error: "Montant invalide" });
+        const { amount, depositNumber } = req.body;
+        if (!amount || !depositNumber) {
+            return res.status(400).json({ error: "Tous les champs sont requis." });
         }
 
-        req.user.balance += amount;
-        req.user.depositMade = true;
-        await req.user.save();
+        // ✅ Ajouter le dépôt à la liste des requêtes d'admin (sans modifier le solde)
+        const depositRequest = {
+            userId: req.user._id,
+            phoneNumber: req.user.phoneNumber,
+            amount: amount,
+            date: new Date(),
+            status: "pending"
+        };
 
-        res.json({ message: "Dépôt enregistré avec succès !", newBalance: req.user.balance });
+        // Enregistrer la demande dans une collection "depositRequests"
+        await DepositRequest.create(depositRequest);
+
+        res.json({ message: "Votre dépôt a été pris en compte. Il sera validé par un administrateur." });
+
     } catch (err) {
         console.error("Erreur dépôt :", err);
-        res.status(500).json({ error: "Erreur serveur lors du dépôt" });
+        res.status(500).json({ error: "Erreur serveur lors du dépôt." });
     }
 });
+
 
 // Retrait d'argent
 app.post('/api/withdraw', authenticate, async (req, res) => {
