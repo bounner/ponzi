@@ -89,6 +89,39 @@ async function fetchDepositRequests() {
     }
 }
 
+// ✅ Confirmer une requête de dépôt
+async function confirmDeposit(depositId) {
+    try {
+        const res = await fetch(`/api/admin/confirm-deposit/${depositId}`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.error || "Erreur lors de la confirmation du dépôt.");
+            return;
+        }
+
+        // ✅ Mettre à jour l'affichage dans l'interface
+        document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
+        const btn = document.getElementById(`btn-${depositId}`);
+        btn.classList.remove("btn-warning");
+        btn.classList.add("btn-success");
+        btn.textContent = "Confirmé ✅";
+        btn.disabled = true;
+
+        // ✅ Enregistrer l'état confirmé localement pour éviter qu'il revienne à "Confirmer" après rafraîchissement
+        localStorage.setItem(`deposit-${depositId}`, "confirmed");
+
+    } catch (err) {
+        console.error("Erreur confirmation dépôt :", err);
+        alert("Erreur lors de la confirmation.");
+    }
+}
+
+
 // ✅ Modifier un utilisateur (pré-remplir les champs)
 function editUser(id, balance) {
     document.getElementById('userId').value = id;
@@ -157,16 +190,3 @@ async function generateUniqueKey(userId) {
     }
 }
 
-// ✅ Confirmer une requête de dépôt
-async function confirmDeposit(depositId) {
-    try {
-        document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
-        document.getElementById(`btn-${depositId}`).classList.remove("btn-warning");
-        document.getElementById(`btn-${depositId}`).classList.add("btn-success");
-        document.getElementById(`btn-${depositId}`).textContent = "Confirmé ✅";
-        document.getElementById(`btn-${depositId}`).disabled = true;
-    } catch (err) {
-        console.error("Erreur confirmation dépôt :", err);
-        alert("Erreur lors de la confirmation.");
-    }
-}
