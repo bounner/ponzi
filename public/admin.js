@@ -9,7 +9,6 @@ if (!token) {
 
 // ✅ Vérifier si l'utilisateur est admin
 document.addEventListener("DOMContentLoaded", function () {
-    
     if (isAdmin) {
         console.log("🔹 Admin connecté, chargement des utilisateurs...");
         fetchUsers();
@@ -18,8 +17,24 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("❌ Accès refusé, redirection vers l'accueil");
         alert("Accès refusé !");
         window.location.href = "/index.html";
+        return; // ✅ Évite d'exécuter le reste du script si l'accès est refusé
     }
+
+    // ✅ Vérifier dans localStorage les dépôts déjà confirmés
+    setTimeout(() => {
+        document.querySelectorAll("[id^=btn-]").forEach(btn => {
+            const depositId = btn.id.replace("btn-", "");
+            if (localStorage.getItem(`deposit-${depositId}`) === "confirmed") {
+                btn.classList.remove("btn-warning");
+                btn.classList.add("btn-success");
+                btn.textContent = "Confirmé ✅";
+                btn.disabled = true;
+                document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
+            }
+        });
+    }, 1000); // ✅ Attendre un peu que la table se charge
 });
+
 
 // ✅ Récupérer la liste des utilisateurs
 async function fetchUsers() {
