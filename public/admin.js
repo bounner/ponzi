@@ -63,6 +63,12 @@ async function fetchDepositRequests() {
         const deposits = await res.json();
         const tbody = document.getElementById('deposit-requests');
 
+        // ✅ Vérifier si l'élément existe avant de modifier son `innerHTML`
+        if (!tbody) {
+            console.error("❌ L'élément deposit-requests est introuvable !");
+            return;
+        }
+
         tbody.innerHTML = deposits.map(d => 
             `<tr>
                 <td>${d.phoneNumber}</td>
