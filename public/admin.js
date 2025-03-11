@@ -9,6 +9,7 @@ if (!token) {
 
 // ✅ Vérifier si l'utilisateur est admin
 document.addEventListener("DOMContentLoaded", function () {
+    
     if (isAdmin) {
         console.log("🔹 Admin connecté, chargement des utilisateurs...");
         fetchUsers();
