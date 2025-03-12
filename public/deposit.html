@@ -20,11 +20,9 @@
 
                 <!-- ✅ Numéro de dépôt affiché en haut -->
                 <div class="deposit-info text-center">
-                    <p class="fw-bold fs-4">Numéro pour le dépôt :</p>
-                    <p id="deposit-number" class="fs-3 text-primary">+237 6XX XX XX XX</p>
-                    <button class="btn btn-outline-primary" onclick="copyDepositNumber()">
-                        📋 Copier le numéro
-                    </button>
+                   <p>Envoyez votre dépôt à :</p>
+<p><strong>Orange Money :</strong> <span id="orange-number">695XXXXXX</span> <button onclick="copyNumber('orange-number')">📋 Copier</button></p>
+<p><strong>MTN Mobile Money :</strong> <span id="mtn-number">670XXXXXX</span> <button onclick="copyNumber('mtn-number')">📋 Copier</button></p>
                 </div>
 
                 <form class="mt-4">
