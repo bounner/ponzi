@@ -1,6 +1,10 @@
 // ✅ Récupérer le token et vérifier l'accès admin
-const token = localStorage.getItem("token");
-const isAdmin = localStorage.getItem("isAdmin") === "true"; // Convertir en booléen
+//const token = localStorage.getItem("token");
+//const isAdmin = localStorage.getItem("isAdmin") === "true"; // Convertir en booléen
+
+const token = sessionStorage.getItem("token");
+const isAdmin = sessionStorage.getItem("isAdmin") === "true";
+
 
 if (!token) {
     alert("Accès refusé. Veuillez vous connecter.");
