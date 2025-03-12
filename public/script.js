@@ -32,7 +32,45 @@ async function fetchUsers() {
 }
 
 
+//submitdeposite
+async function submitDeposit() {
+    const amountField = document.getElementById("depositAmount");
+    const depositNumberField = document.getElementById("depositNumber");
 
+    if (!amountField || !depositNumberField) {
+        console.error("❌ Les champs de dépôt sont introuvables !");
+        alert("Une erreur s'est produite. Essayez de recharger la page.");
+        return;
+    }
+
+    const amount = amountField.value;
+    const depositNumber = depositNumberField.value;
+
+    if (!amount || !depositNumber) {
+        alert("Veuillez remplir tous les champs !");
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/deposit', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Authorization': `Bearer ${localStorage.getItem("token")}` 
+            },
+            body: JSON.stringify({ amount, depositNumber })
+        });
+
+        const data = await res.json();
+        alert(data.message || "Votre dépôt a été pris en compte. Il sera validé par un administrateur.");
+    } catch (err) {
+        alert("Erreur lors de la soumission du dépôt.");
+        console.error(err);
+    }
+}
+
+
+//edit user
 function editUser(id, balance) {
     document.getElementById('userId').value = id;
     document.getElementById('balance').value = balance;
@@ -58,6 +96,29 @@ async function updateUser() {
         console.error(err);
     }
 }
+//afficher palier
+async function fetchUserData() {
+    try {
+        const res = await fetch("/api/user", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
+        const data = await res.json();
+
+        if (document.getElementById("ref-link")) {
+            document.getElementById("ref-link").textContent = data.referralLink || "Non disponible";
+        }
+
+        // ✅ Vérifier si c'est un admin et cacher le lien
+        if (localStorage.getItem("isAdmin") === "true") {
+            document.getElementById("referral-section").style.display = "none";
+        }
+    } catch (err) {
+        console.error("Erreur lors de la récupération des données :", err);
+    }
+}
+
 //retrait
 async function withdraw() {
     const amount = document.getElementById('amount').value;
@@ -103,31 +164,27 @@ function copyDepositNumber() {
         alert("Numéro copié : " + depositNumber);
     }).catch(err => console.error("Erreur lors de la copie :", err));
 }
-
+//fetcref
 async function fetchReferrals() {
     try {
-        const res = await fetch("https://pon-app.onrender.com/api/referrals", {
+        const res = await fetch("/api/referrals", {
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
 
-        const data = await res.json();
-        const tbody = document.getElementById("referrals");
-        
-        if (tbody) {
-            tbody.innerHTML = data.referrals.map(r => 
-                `<tr>
-                    <td>${r.phoneNumber}</td>
-                    <td>${r.deposit} F</td>
-                    <td>${new Date(r.date).toLocaleDateString()}</td>
-                </tr>`
-            ).join('');
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Réponse invalide de l'API.");
         }
-        
-        document.getElementById("referral-earnings").textContent = `${data.referralEarnings} F`;
+
+        const data = await res.json();
+        console.log("✅ Données parrainages :", data);
     } catch (err) {
-        console.error("Erreur lors de la récupération des parrainages:", err);
+        console.error("Erreur lors de la récupération des parrainages :", err);
     }
 }
+
+
+//depot
 async function fetchDeposits() {
     try {
         const res = await fetch("https://pon-app.onrender.com/api/admin/deposits", {
@@ -404,37 +461,6 @@ async function confirmDeposit(depositId) {
 }
 
 //subbmit
-async function submitDeposit() {
-    const amount = document.getElementById("depositAmount").value;
-    const depositNumber = document.getElementById("depositNumber").value;
-
-    if (!amount || !depositNumber) {
-        alert("Veuillez remplir tous les champs !");
-        return;
-    }
-
-    try {
-        const res = await fetch('/api/deposit', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Authorization': `Bearer ${localStorage.getItem("token")}` 
-            },
-            body: JSON.stringify({ amount, depositNumber })
-        });
-
-        const data = await res.json();
-        alert(data.message || "Votre dépôt a été pris en compte. Votre solde sera mis à jour après validation par l'admin.");
-
-        // ✅ NE PAS modifier le solde ici (seul l'admin doit le faire)
-    } catch (err) {
-        alert("Erreur lors de la soumission du dépôt.");
-        console.error(err);
-    }
-}
-
-
-
 
 // ✅ Fonction de connexion
 async function login() {
@@ -611,50 +637,7 @@ async function buyTier(level) {
     }
 }
 
-//afficher palier
-async function fetchUserData() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        console.warn("⚠️ Aucun token trouvé. L'utilisateur est considéré comme déconnecté.");
-        return;
-    }
 
-    try {
-        const res = await fetch("https://pon-app.onrender.com/api/user", {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-
-        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
-        const data = await res.json();
-
-        console.log("✅ Données utilisateur récupérées :", data);
-
-        // ✅ Vérifier si les éléments existent avant de les modifier
-        if (document.getElementById("balance")) {
-            document.getElementById("balance").textContent = data.balance + " F";
-        }
-
-        if (document.getElementById("tier-level")) {
-            document.getElementById("tier-level").textContent = 
-                data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
-        }
-
-        // ✅ Désactiver le bouton du palier actif
-        for (let i = 1; i <= 5; i++) {
-            const button = document.getElementById(`tier${i}`);
-            if (button) {
-                button.disabled = (i === data.tierLevel);
-            }
-        }
-
-        if (document.getElementById("ref-link")) {
-            document.getElementById("ref-link").textContent = data.referralLink || "Non connecté";
-        }
-
-    } catch (err) {
-        console.error("❌ Erreur lors de la récupération des données utilisateur :", err);
-    }
-}
 
 
 // cacher ou montrer admin btn
