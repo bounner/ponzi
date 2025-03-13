@@ -1,15 +1,11 @@
+
+// ✅ Initialisation du token et vérification correcte de l'authentification
 let token = localStorage.getItem('token');
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
-
 
 document.addEventListener("DOMContentLoaded", function() {
     if (token) {
         fetchUserData();
-        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-            document.getElementById('admin-btn').style.display = isAdmin ? 'inline-block' : 'none';
-            document.getElementById('signup-btn').style.display = 'none';
-            document.getElementById('logout-btn').style.display = 'block';
-        }
         if (window.location.pathname === '/admin.html') {
             if (isAdmin) fetchUsers();
             else {
@@ -17,14 +13,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 window.location.href = '/login.html';
             }
         }
-        if (window.location.pathname === '/referrals.html') fetchReferrals();
         if (window.location.pathname === '/mining.html') fetchMiningData();
     } else {
-        if (document.getElementById('signup-btn')) {
-            document.getElementById('signup-btn').style.display = 'block';
-            document.getElementById('logout-btn').style.display = 'none';
-        }
-        if (window.location.pathname === '/admin.html' || window.location.pathname === '/mining.html') {
+        if (window.location.pathname !== '/login.html' && window.location.pathname !== '/register.html') {
             alert('Veuillez vous connecter');
             window.location.href = '/login.html';
         }
@@ -35,14 +26,12 @@ document.addEventListener("DOMContentLoaded", function() {
 async function fetchUsers() {
     try {
         const res = await fetch('/api/admin/users', {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+            headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
 
         const users = await res.json();
-        console.log("✅ Utilisateurs récupérés :", users);
-
         const tbody = document.getElementById('users');
         tbody.innerHTML = users.map(u => 
             `<tr>
@@ -61,14 +50,30 @@ async function fetchUsers() {
         console.error('Erreur lors de la récupération des utilisateurs:', err);
     }
 }
-//cpoy number
-function copyNumber(id) {
-    const text = document.getElementById(id).textContent;
-    navigator.clipboard.writeText(text).then(() => {
-        alert("Numéro copié : " + text);
-    }).catch(err => {
-        console.error("Erreur lors de la copie :", err);
-    });
+
+// ✅ Correction de la soumission du dépôt
+async function submitDeposit() {
+    const amount = document.getElementById("depositAmount").value;
+    const depositNumber = document.getElementById("depositNumber").value;
+
+    if (!amount || !depositNumber) {
+        alert("Veuillez remplir tous les champs !");
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/deposit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ amount, depositNumber })
+        });
+
+        const data = await res.json();
+        alert(data.message || "Votre dépôt a été pris en compte. Il sera validé par un administrateur.");
+    } catch (err) {
+        alert("Erreur lors de la soumission du dépôt.");
+        console.error(err);
+    }
 }
 
 
@@ -452,23 +457,18 @@ async function confirmDeposit(depositId) {
     if (!confirm("Confirmer ce dépôt ?")) return;
 
     try {
-        const res = await fetch(`https://pon-app.onrender.com/api/admin/confirm-deposit/${depositId}`, {
-            method: "POST",
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-            alert(data.message || "Dépôt confirmé avec succès !");
-            fetchDeposits(); // Rafraîchir la liste après confirmation
-        } else {
-            alert(data.error || "Erreur lors de la confirmation.");
-        }
+        localStorage.setItem(`deposit-${depositId}`, "confirmed");
+        document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
+        document.getElementById(`btn-${depositId}`).classList.remove("btn-warning");
+        document.getElementById(`btn-${depositId}`).classList.add("btn-success");
+        document.getElementById(`btn-${depositId}`).textContent = "Confirmé ✅";
+        document.getElementById(`btn-${depositId}`).disabled = true;
     } catch (err) {
-        alert("Erreur serveur.");
-        console.error(err);
+        console.error("Erreur confirmation dépôt :", err);
+        alert("Erreur lors de la confirmation.");
     }
 }
+
 
 //subbmit
 
