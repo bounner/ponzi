@@ -1,6 +1,39 @@
 let token = localStorage.getItem('token');
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    if (token) {
+        fetchUserData();
+        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+            document.getElementById('admin-btn').style.display = isAdmin ? 'inline-block' : 'none';
+            document.getElementById('signup-btn').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'block';
+        }
+        if (window.location.pathname === '/admin.html') {
+            if (isAdmin) fetchUsers();
+            else {
+                alert('Accès réservé aux administrateurs');
+                window.location.href = '/login.html';
+            }
+        }
+        if (window.location.pathname === '/referrals.html') fetchReferrals();
+        if (window.location.pathname === '/mining.html') fetchMiningData();
+    } else {
+        if (document.getElementById('signup-btn')) {
+            document.getElementById('signup-btn').style.display = 'block';
+            document.getElementById('logout-btn').style.display = 'none';
+        }
+        if (window.location.pathname === '/admin.html' || window.location.pathname === '/mining.html') {
+            alert('Veuillez vous connecter');
+            window.location.href = '/login.html';
+        }
+    }
+});
+
+
 async function fetchUsers() {
     try {
         const res = await fetch('/api/admin/users', {
@@ -105,7 +138,7 @@ async function updateUser() {
         console.error(err);
     }
 }
-//afficher palier
+//afficher palierdocument.addEventListener
 async function fetchUserData() {
     try {
         const res = await fetch("/api/user", {
@@ -252,34 +285,6 @@ async function claimDailyGain() {
 }
 
 
-document.addEventListener("DOMContentLoaded", function() {
-    if (token) {
-        fetchUserData();
-        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-            document.getElementById('admin-btn').style.display = isAdmin ? 'inline-block' : 'none';
-            document.getElementById('signup-btn').style.display = 'none';
-            document.getElementById('logout-btn').style.display = 'block';
-        }
-        if (window.location.pathname === '/admin.html') {
-            if (isAdmin) fetchUsers();
-            else {
-                alert('Accès réservé aux administrateurs');
-                window.location.href = '/login.html';
-            }
-        }
-        if (window.location.pathname === '/referrals.html') fetchReferrals();
-        if (window.location.pathname === '/mining.html') fetchMiningData();
-    } else {
-        if (document.getElementById('signup-btn')) {
-            document.getElementById('signup-btn').style.display = 'block';
-            document.getElementById('logout-btn').style.display = 'none';
-        }
-        if (window.location.pathname === '/admin.html' || window.location.pathname === '/mining.html') {
-            alert('Veuillez vous connecter');
-            window.location.href = '/login.html';
-        }
-    }
-});
 
 // ✅ Vérifier si un lien d'invitation est utilisé et remplir automatiquement le champ
 function checkReferralOnRegister() {
