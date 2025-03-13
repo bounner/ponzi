@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ✅ Ne pas rediriger si l'utilisateur est déjà sur `login.html`
    // ✅ Ne pas rediriger si l'utilisateur est sur `register.html` ou `login.html`
-    if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
+  if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
         console.log("❌ Aucun token trouvé, redirection vers login.");
         window.location.href = "/login.html";
     } else {
@@ -380,13 +380,11 @@ function closePopup() {
 
 // ✅ Fonction d'inscription
 async function register() {
-    console.log("Tentative d'inscription..."); // ✅ Vérifier si la fonction est bien appelée
-
     const phoneNumber = document.getElementById("phoneNumber").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirm-password").value;
-    const referralCode = document.getElementById("referralCode")?.value || null;
+    const referralCode = document.getElementById("referralCode")?.value || "";
 
     if (password !== confirmPassword) {
         alert("Les mots de passe ne correspondent pas !");
@@ -394,49 +392,24 @@ async function register() {
     }
 
     try {
-        console.log("Envoi de la requête à l'API...");
         const res = await fetch("https://pon-app.onrender.com/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phoneNumber, email, password, referralCode })
         });
 
-        console.log("Réponse reçue :", res);
         const data = await res.json();
-        
         if (res.ok) {
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("isAdmin", data.isAdmin);
-            alert("Inscription réussie !");
-            window.location.href = "/index.html";
+            alert("✅ Inscription réussie !");
+            window.location.href = "/login.html";
         } else {
-            alert("Erreur : " + (data.error || "Inscription échouée"));
+            alert("❌ Erreur : " + data.error);
         }
     } catch (err) {
-        console.error("Erreur API :", err);
-        alert("Impossible de contacter le serveur.");
+        console.error("❌ Erreur lors de l'inscription :", err);
     }
 }
-async function checkWithdrawEligibility() {
-    if (!token) return;
 
-    try {
-        const res = await fetch("/api/user", {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-
-        const data = await res.json();
-        if (data.balance < 7000) {
-            document.getElementById("withdraw-btn").disabled = true;
-            document.getElementById("withdraw-warning").style.display = "block";
-        } else {
-            document.getElementById("withdraw-btn").disabled = false;
-            document.getElementById("withdraw-warning").style.display = "none";
-        }
-    } catch (err) {
-        console.error("Erreur vérification solde retrait :", err);
-    }
-}
 
 //cacher si solde
 
