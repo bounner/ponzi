@@ -45,26 +45,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true";
 
+    // ✅ Autoriser l'accès à login.html et register.html même sans token
     if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
         console.log("❌ Aucun token trouvé, redirection vers login.");
         window.location.href = "/login.html";
-    } else {
-        console.log("✅ Session active !");
-        // UI updates for logged-in users
-        if (document.getElementById("signup-btn")) {
-            document.getElementById("signup-btn").style.display = "none";
-        }
-        if (document.getElementById("logout-btn")) {
-            document.getElementById("logout-btn").style.display = "block";
-            document.getElementById("logout-btn").addEventListener("click", () => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("isAdmin");
-                window.location.href = "/login.html";
-            });
-        }
-        // Fetch user data
+        return; // ⚠️ Important : Arrêter l'exécution ici
+    }
+
+    console.log("✅ Session active !");
+    
+    // ✅ Gérer le bouton "Logout" et cacher "S'inscrire"
+    if (document.getElementById("signup-btn")) {
+        document.getElementById("signup-btn").style.display = "none";
+    }
+    if (document.getElementById("logout-btn")) {
+        document.getElementById("logout-btn").style.display = "block";
+    }
+
+    // ✅ Charger les données utilisateur seulement si on est connecté
+    if (token) {
         fetchUserData();
     }
+});
+
 
     function fetchUserData() {
         fetch('/api/user', {
