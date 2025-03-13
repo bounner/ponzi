@@ -10,13 +10,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <p id="welcome-msg" class="welcome-text"></p>
 
     <a href="index.html" class="home-icon"><i class="fas fa-home"></i> Accueil</a>
     <a href="javascript:history.back()" class="back-icon"><i class="fas fa-arrow-left"></i> Retour</a>
     <div class="container mt-5">
         <div class="text-center mb-4">
-            <h1>Double Ton Argent en Crypto !</h1>
+            <h1>Double Ton Argent Avec 1ICE !</h1>
+                <p id="welcome-msg" class="welcome-text"></p>
             <p>Inscris-toi et commence à gagner</p>
         </div>
         <div class="card text-center mb-4">
@@ -30,7 +30,9 @@
         <div class="row text-center">
             <div class="col-md-3 col-6">
                 <a href="register.html" class="btn btn-primary" id="signup-btn"><i class="fas fa-user-plus"></i> S'inscrire</a>
-                <button id="logout-btn" onclick="logout()" style="display: none;">Déconnexion</button>
+             <button id="logout-btn" onclick="logout()" class="btn btn-danger" style="display: none;">
+    <i class="fas fa-sign-out-alt"></i> Déconnexion
+</button>
 
             </div>
             <div class="col-md-3 col-6"><a href="deposit.html" class="btn btn-success"><i class="fas fa-wallet"></i> Dépôt</a></div>
