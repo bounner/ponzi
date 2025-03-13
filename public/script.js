@@ -9,65 +9,31 @@ function logout() {
     window.location.href = "/login.html";
 }
 
-// ✅ Fonction d'inscription
-async function register() {
-    const phoneNumber = document.getElementById("phoneNumber").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirm-password").value;
-    const referralCode = document.getElementById("referralCode")?.value || "";
 
-    if (password !== confirmPassword) {
-        alert("Les mots de passe ne correspondent pas !");
-        return;
-    }
-
-    try {
-        const res = await fetch("https://pon-app.onrender.com/api/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ phoneNumber, email, password, referralCode })
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-            alert("✅ Inscription réussie !");
-            window.location.href = "/login.html";
-        } else {
-            alert("❌ Erreur : " + data.error);
-        }
-    } catch (err) {
-        console.error("❌ Erreur lors de l'inscription :", err);
-    }
-}
 
 document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-    // ✅ Autoriser l'accès à login.html et register.html même sans token
     if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
         console.log("❌ Aucun token trouvé, redirection vers login.");
         window.location.href = "/login.html";
-        return; // ⚠️ Important : Arrêter l'exécution ici
-    }
+    } else {
+        console.log("✅ Session active !");
+        fetchUserData();
 
-    console.log("✅ Session active !");
-    
-    // ✅ Gérer le bouton "Logout" et cacher "S'inscrire"
-    if (document.getElementById("signup-btn")) {
-        document.getElementById("signup-btn").style.display = "none";
-    }
-    if (document.getElementById("logout-btn")) {
-        document.getElementById("logout-btn").style.display = "block";
-    }
+        // Gérer le bouton "Logout" et cacher "S'inscrire"
+        if (document.getElementById("signup-btn")) {
+            document.getElementById("signup-btn").style.display = "none";
+        }
+        if (document.getElementById("logout-btn")) {
+            document.getElementById("logout-btn").style.display = "block";
+        }
 
-    // ✅ Charger les données utilisateur seulement si on est connecté
-    if (token) {
+        // Charger les données utilisateur (optional: remove if only one call is needed)
         fetchUserData();
     }
-});
-
+}); // Properly closed here
 
     function fetchUserData() {
         fetch('/api/user', {
@@ -123,6 +89,38 @@ async function fetchUserData() {
 
     } catch (err) {
         console.error("❌ Erreur lors de la récupération des données :", err);
+    }
+}
+
+// ✅ Fonction d'inscription
+async function register() {
+    const phoneNumber = document.getElementById("phoneNumber").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+    const referralCode = document.getElementById("referralCode")?.value || "";
+
+    if (password !== confirmPassword) {
+        alert("Les mots de passe ne correspondent pas !");
+        return;
+    }
+
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phoneNumber, email, password, referralCode })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("✅ Inscription réussie !");
+            window.location.href = "/login.html";
+        } else {
+            alert("❌ Erreur : " + data.error);
+        }
+    } catch (err) {
+        console.error("❌ Erreur lors de l'inscription :", err);
     }
 }
 
