@@ -6,32 +6,33 @@ console.log("✅ Vérification de la session... Token :", token, "| Admin :", is
 
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const token = localStorage.getItem("token");
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  const allowedPages = ["/login.html", "/register.html"];
+  const currentPath = window.location.pathname;
 
-    // ✅ Autoriser l'accès uniquement à login.html et register.html si l'utilisateur n'est pas connecté
-    if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
-        console.log("❌ Aucun token trouvé, redirection vers login.");
-        window.location.href = "/login.html";
-        return; // ⚠️ Stopper l'exécution après la redirection
-    }
+  // Redirection si pas de token et la page n'est pas autorisée
+  if (!token && !allowedPages.includes(currentPath)) {
+    console.log("❌ Aucun token trouvé, redirection vers login.");
+    window.location.href = "/login.html";
+    return;
+  }
 
-    console.log("✅ Session active !");
-    
-    // ✅ Gérer le bouton "Logout" et cacher "S'inscrire"
-    if (document.getElementById("signup-btn")) {
-        document.getElementById("signup-btn").style.display = "none";
-    }
-    if (document.getElementById("logout-btn")) {
-        document.getElementById("logout-btn").style.display = "block";
-    }
+  console.log("✅ Session active !");
 
-    // ✅ Charger les données utilisateur seulement si on est connecté
-    if (token) {
-        fetchUserData();
-    }
+  // Afficher le bouton de déconnexion et masquer le bouton d'inscription si connecté
+  const signupBtn = document.getElementById("signup-btn");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  if (signupBtn) signupBtn.style.display = token ? "none" : "block";
+  if (logoutBtn) logoutBtn.style.display = token ? "block" : "none";
+
+  // Charger les données utilisateur si connecté
+  if (token) {
+    fetchUserData();
+  }
 });
+
 
 
     function fetchUserData() {
