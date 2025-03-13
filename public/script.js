@@ -4,6 +4,17 @@ let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 console.log("✅ Vérification de la session... Token :", token, "| Admin :", isAdmin);
 
+document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+    if (!token) {
+        console.log("❌ Aucun token trouvé, redirection vers login.");
+        window.location.href = "/login.html";
+    } else {
+        console.log("✅ Session active !");
+    }
+});
 
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -440,36 +451,30 @@ document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
 
 // ✅ Fonction de connexion corrigée
 async function login() {
-    const phoneNumber = document.getElementById("phoneNumber").value;
-    const password = document.getElementById("password").value;
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    const password = document.getElementById('password').value;
 
     try {
-        const res = await fetch("https://pon-app.onrender.com/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phoneNumber, password })
         });
 
         const data = await res.json();
-        console.log("Données après login :", data);
-
-        if (data.token) {
+        if (res.ok) {
             localStorage.setItem("token", data.token);
             localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
-
-            console.log("✅ Token stocké :", localStorage.getItem("token"));
-            
-            fetchUserData(); // ✅ Charger les infos utilisateur après connexion
-            window.location.href = "/index.html"; // Rediriger vers la page principale
+            console.log("✅ Connexion réussie, token enregistré :", data.token);
+            window.location.href = '/index.html'; // Rediriger après connexion
         } else {
-            alert(data.error || "Erreur lors de la connexion");
+            alert(data.error || "Erreur de connexion");
         }
     } catch (err) {
         alert("Erreur lors de la connexion.");
         console.error(err);
     }
 }
-
 
 // ✅ Fonction pour effectuer un dépôt
 function deposit() {
