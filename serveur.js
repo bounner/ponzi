@@ -8,31 +8,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const authenticate = async (req, res, next) => {
     try {
-        console.log("🔍 Vérification du Token:", req.headers.authorization);
-        
         const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-            console.warn("❌ Aucun token reçu !");
-            return res.status(401).json({ error: 'Non autorisé - Token manquant' });
-        }
+        if (!token) return res.status(401).json({ error: 'Non autorisé - Token manquant' });
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("✅ Token décodé:", decoded);
-
         const user = await User.findById(decoded.id);
-        if (!user) {
-            console.warn("❌ Utilisateur introuvable !");
-            return res.status(404).json({ error: 'Utilisateur non trouvé' });
-        }
+        if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
 
         req.user = user;
         next();
     } catch (err) {
-        console.error("❌ Erreur JWT:", err.message);
         return res.status(401).json({ error: 'Token invalide ou expiré' });
     }
 };
-
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
