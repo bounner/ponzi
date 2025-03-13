@@ -180,9 +180,11 @@ async function fetchReferrals() {
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
 
+        if (!res.ok) throw new Error(`Erreur API : ${res.status} - ${res.statusText}`);
+
         const contentType = res.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-            throw new Error("Réponse invalide de l'API.");
+            throw new Error("Réponse invalide de l'API (pas du JSON)");
         }
 
         const data = await res.json();
@@ -191,7 +193,6 @@ async function fetchReferrals() {
         console.error("Erreur lors de la récupération des parrainages :", err);
     }
 }
-
 
 //depot
 async function fetchDeposits() {
