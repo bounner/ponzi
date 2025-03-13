@@ -3,11 +3,7 @@ let token = localStorage.getItem('token') || null;
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 console.log("✅ Vérification de la session... Token :", token, "| Admin :", isAdmin);
-// ✅ Stocker le token et forcer un rechargement après connexion
-localStorage.setItem("token", data.token);
-localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
-console.log("✅ Connexion réussie, rechargement de la page...");
-window.location.reload(); // Rafraîchir la page pour mettre à jour l'affichage
+
 
 
 document.addEventListener("DOMContentLoaded", function() {
