@@ -10,29 +10,32 @@ function logout() {
 }
 
 
-
 document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-    // ✅ Autoriser l'accès à login.html et register.html même sans token
-    if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
+    // ✅ Autoriser l'accès uniquement à login.html et register.html si l'utilisateur n'est pas connecté
+    const allowedPages = ["/login.html", "/register.html"];
+    if (!token && !allowedPages.includes(window.location.pathname)) {
         console.log("❌ Aucun token trouvé, redirection vers login.");
         window.location.href = "/login.html";
-        return; // ⚠️ Important : Arrêter l'exécution ici
+        return; // ⚠️ Stopper l'exécution après la redirection
     }
 
     console.log("✅ Session active !");
-    
-    // ✅ Gérer le bouton "Logout" et cacher "S'inscrire"
-    if (document.getElementById("signup-btn")) {
-        document.getElementById("signup-btn").style.display = "none";
+
+    // ✅ Afficher / Cacher les boutons en fonction de la connexion
+    const signupBtn = document.getElementById("signup-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    if (signupBtn) {
+        signupBtn.style.display = token ? "none" : "block"; // Cache "S'inscrire" si connecté
     }
-    if (document.getElementById("logout-btn")) {
-        document.getElementById("logout-btn").style.display = "block";
+    if (logoutBtn) {
+        logoutBtn.style.display = token ? "block" : "none"; // Affiche "Déconnexion" si connecté
     }
 
-    // ✅ Charger les données utilisateur seulement si on est connecté
+    // ✅ Charger les données utilisateur uniquement si un token est présent
     if (token) {
         fetchUserData();
     }
