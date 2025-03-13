@@ -112,59 +112,19 @@ async function fetchUserData() {
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
 
-        if (!res.ok) throw new Error("Erreur lors de la récupération des données");
+        if (!res.ok) throw new Error(`Erreur lors de la récupération des données (code ${res.status})`);
+
         const data = await res.json();
+        console.log("✅ Données utilisateur reçues :", data);
 
-        if (document.getElementById("ref-link")) {
-            document.getElementById("ref-link").textContent = data.referralLink || "Non disponible";
-        }
-
-        // ✅ Vérifier si c'est un admin et cacher le lien
-        if (localStorage.getItem("isAdmin") === "true") {
-            document.getElementById("referral-section").style.display = "none";
+        if (document.getElementById("balance")) {
+            document.getElementById("balance").textContent = `${data.balance} F`;
         }
     } catch (err) {
         console.error("Erreur lors de la récupération des données :", err);
     }
 }
 
-//retrait
-async function withdraw() {
-    const amount = document.getElementById('amount').value;
-    const withdrawNumber = document.getElementById('withdrawNumber').value;
-    const withdrawMethod = document.getElementById('withdrawMethod').value;
-
-    if (!withdrawNumber) {
-        alert('Veuillez entrer un numéro de retrait.');
-        return;
-    }
-
-    try {
-        const res = await fetch('https://pon-app.onrender.com/api/withdraw', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("token")}` },
-            body: JSON.stringify({ 
-                amount: parseFloat(amount),
-                withdrawNumber,
-                withdrawMethod 
-            })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            alert(data.error || 'Erreur lors du retrait');
-            return;
-        }
-
-        alert(data.message);
-        fetchUserData(); // Mettre à jour l'affichage du solde après le retrait
-
-    } catch (err) {
-        alert('Erreur lors du retrait');
-        console.error(err);
-    }
-}
 
 //cpt depo num
 function copyDepositNumber() {
