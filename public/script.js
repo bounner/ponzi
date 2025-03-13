@@ -2,8 +2,6 @@ let token = localStorage.getItem('token');
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 
-
-
 document.addEventListener("DOMContentLoaded", function() {
     if (token) {
         fetchUserData();
@@ -408,6 +406,7 @@ async function checkWithdrawEligibility() {
         console.error("Erreur vérification solde retrait :", err);
     }
 }
+console.log("🔍 Token actuel dans localStorage :", localStorage.getItem("token"));
 
 async function checkSession() {
     const token = localStorage.getItem("token");
