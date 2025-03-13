@@ -409,6 +409,35 @@ async function checkWithdrawEligibility() {
     }
 }
 
+async function checkSession() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        console.warn("❌ Aucun token trouvé, vérification annulée.");
+        return; // ✅ Évite la boucle infinie
+    }
+
+    try {
+        const res = await fetch("/api/user", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            console.warn(`❌ Token invalide (code ${res.status}), suppression du token.`);
+            localStorage.removeItem("token");
+            alert("Session expirée. Veuillez vous reconnecter.");
+            window.location.href = "/login.html";
+        } else {
+            console.log("✅ Session active !");
+        }
+    } catch (err) {
+        console.error("❌ Erreur lors de la vérification du token :", err);
+    }
+}
+
+// ✅ Vérifier la session au chargement de la page
+document.addEventListener("DOMContentLoaded", checkSession);
+
 
 // Vérifier le solde au chargement de la page
 document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
