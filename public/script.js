@@ -112,13 +112,14 @@ async function fetchUserData() {
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
 
-        if (!res.ok) throw new Error(`Erreur lors de la récupération des données (code ${res.status})`);
+        if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
 
         const data = await res.json();
-        console.log("✅ Données utilisateur reçues :", data);
+        console.log("✅ Données utilisateur récupérées :", data);
 
-        if (document.getElementById("balance")) {
-            document.getElementById("balance").textContent = `${data.balance} F`;
+        const referralSection = document.getElementById("referral-section");
+        if (referralSection) {
+            referralSection.style.display = localStorage.getItem("isAdmin") === "true" ? "none" : "block";
         }
     } catch (err) {
         console.error("Erreur lors de la récupération des données :", err);
