@@ -21,18 +21,18 @@
                 <!-- ✅ Numéro de dépôt affiché en haut -->
                 <div class="deposit-info text-center">
                    <p>Envoyez votre dépôt à :</p>
-<p><strong>Orange Money :</strong> <span id="orange-number">695XXXXXX</span> <button onclick="copyNumber('orange-number')">📋 Copier</button></p>
-<p><strong>MTN Mobile Money :</strong> <span id="mtn-number">670XXXXXX</span> <button onclick="copyNumber('mtn-number')">📋 Copier</button></p>
+                   <p><strong>Orange Money :</strong> <span id="orange-number">695XXXXXX</span> <button onclick="copyNumber('orange-number')">📋 Copier</button></p>
+                   <p><strong>MTN Mobile Money :</strong> <span id="mtn-number">670XXXXXX</span> <button onclick="copyNumber('mtn-number')">📋 Copier</button></p>
                 </div>
 
                 <form class="mt-4">
                     <div class="mb-3">
-                        <label for="amount" class="form-label">Montant du dépôt</label>
-                        <input type="number" id="amount" class="form-control" placeholder="Ex: 5000" required>
+                        <label for="depositAmount" class="form-label">Montant du dépôt</label>
+                        <input type="number" id="depositAmount" class="form-control" placeholder="Ex: 5000" required>
                     </div>
                     <div class="mb-3">
-                        <label for="user-number" class="form-label">Numéro utilisé pour le dépôt</label>
-                        <input type="text" id="user-number" class="form-control" placeholder="Ex: 691234567" required>
+                        <label for="depositNumber" class="form-label">Numéro utilisé pour le dépôt</label>
+                        <input type="text" id="depositNumber" class="form-control" placeholder="Ex: 691234567" required>
                     </div>
                     <button type="button" onclick="submitDeposit()" class="btn btn-success w-100">
                         <i class="fas fa-check"></i> Soumettre le dépôt
