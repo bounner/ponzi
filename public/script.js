@@ -13,6 +13,17 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "/login.html";
     } else {
         console.log("✅ Session active !");
+        
+        // ✅ Gérer le bouton "Logout" et cacher "S'inscrire"
+        if (document.getElementById("signup-btn")) {
+            document.getElementById("signup-btn").style.display = "none";
+        }
+        if (document.getElementById("logout-btn")) {
+            document.getElementById("logout-btn").style.display = "block";
+        }
+
+        // ✅ Charger les données utilisateur
+        fetchUserData();
     }
 });
 
@@ -28,6 +39,11 @@ async function fetchUserData() {
         const data = await res.json();
         console.log("✅ Données utilisateur récupérées :", data);
 
+        // ✅ Afficher le message de bienvenue
+        if (document.getElementById("welcome-msg")) {
+            document.getElementById("welcome-msg").textContent = `Bienvenue, ${data.phoneNumber} !`;
+        }
+
         if (document.getElementById("balance")) {
             document.getElementById("balance").textContent = data.balance + " F";
         }
@@ -38,18 +54,14 @@ async function fetchUserData() {
         }
 
         if (document.getElementById("ref-link")) {
-            console.log("🔍 Vérification du lien de parrainage :", data.referralLink);
-            if (data.referralLink) {
-                document.getElementById("ref-link").textContent = data.referralLink;
-            } else {
-                document.getElementById("ref-link").textContent = "Aucun lien disponible";
-            }
+            document.getElementById("ref-link").textContent = data.referralLink || "Aucun lien disponible";
         }
 
     } catch (err) {
         console.error("❌ Erreur lors de la récupération des données :", err);
     }
 }
+
 
 
 
