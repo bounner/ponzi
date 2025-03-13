@@ -16,6 +16,42 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+// ✅ Fonction pour récupérer les données utilisateur après connexion
+async function fetchUserData() {
+    try {
+        const res = await fetch("/api/user", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
+
+        const data = await res.json();
+        console.log("✅ Données utilisateur récupérées :", data);
+
+        if (document.getElementById("balance")) {
+            document.getElementById("balance").textContent = data.balance + " F";
+        }
+
+        if (document.getElementById("tier-level")) {
+            document.getElementById("tier-level").textContent = 
+                data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
+        }
+
+        if (document.getElementById("ref-link")) {
+            console.log("🔍 Vérification du lien de parrainage :", data.referralLink);
+            if (data.referralLink) {
+                document.getElementById("ref-link").textContent = data.referralLink;
+            } else {
+                document.getElementById("ref-link").textContent = "Aucun lien disponible";
+            }
+        }
+
+    } catch (err) {
+        console.error("❌ Erreur lors de la récupération des données :", err);
+    }
+}
+
+
 
 document.addEventListener("DOMContentLoaded", function() {
     if (token) {
@@ -124,30 +160,6 @@ async function updateUser() {
     } catch (err) {
         alert("Erreur lors de la mise à jour");
         console.error(err);
-    }
-}
-// ✅ Fonction pour récupérer les données utilisateur après connexion
-async function fetchUserData() {
-    try {
-        const res = await fetch("/api/user", {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-        });
-
-        if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
-
-        const data = await res.json();
-        console.log("✅ Données utilisateur récupérées :", data);
-
-        // Mettre à jour l'affichage des infos utilisateur
-        if (document.getElementById("balance")) {
-            document.getElementById("balance").textContent = data.balance + " F";
-        }
-        if (document.getElementById("tier-level")) {
-            document.getElementById("tier-level").textContent = 
-                data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
-        }
-    } catch (err) {
-        console.error("Erreur lors de la récupération des données :", err);
     }
 }
 
