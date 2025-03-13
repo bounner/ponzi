@@ -14,12 +14,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const isAdmin = localStorage.getItem("isAdmin") === "true";
 
     // ✅ Ne pas rediriger si l'utilisateur est déjà sur `login.html`
-    if (!token && window.location.pathname !== "/login.html") {
+   // ✅ Ne pas rediriger si l'utilisateur est sur `register.html` ou `login.html`
+    if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
         console.log("❌ Aucun token trouvé, redirection vers login.");
         window.location.href = "/login.html";
     } else {
         console.log("✅ Session active !");
-        
+        fetchUserData();
+    }
         // ✅ Gérer le bouton "Logout" et cacher "S'inscrire"
         if (document.getElementById("signup-btn")) {
             document.getElementById("signup-btn").style.display = "none";
