@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-    if (!token) {
+    // ✅ Ne pas rediriger si l'utilisateur est déjà sur `login.html`
+    if (!token && window.location.pathname !== "/login.html") {
         console.log("❌ Aucun token trouvé, redirection vers login.");
         window.location.href = "/login.html";
     } else {
