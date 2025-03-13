@@ -1,7 +1,8 @@
-
-// ✅ Initialisation du token et vérification correcte de l'authentification
-let token = localStorage.getItem('token');
+// ✅ Initialisation correcte du token et de isAdmin
+let token = localStorage.getItem('token') || null;
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+console.log("✅ Vérification de la session... Token :", token, "| Admin :", isAdmin);
 
 document.addEventListener("DOMContentLoaded", function() {
     if (token) {
@@ -15,12 +16,20 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         if (window.location.pathname === '/mining.html') fetchMiningData();
     } else {
-        if (window.location.pathname !== '/login.html' && window.location.pathname !== '/register.html') {
+        if (!window.location.pathname.includes('/login.html') && !window.location.pathname.includes('/register.html')) {
             alert('Veuillez vous connecter');
             window.location.href = '/login.html';
         }
     }
 });
+// ✅ Correction de l'affichage du bouton Admin
+document.addEventListener("DOMContentLoaded", function() {
+    let adminBtn = document.getElementById("admin-btn");
+    if (adminBtn) {
+        adminBtn.style.display = isAdmin ? "block" : "none";
+    }
+});
+
 
 // ✅ Correction de la récupération des utilisateurs
 async function fetchUsers() {
@@ -104,7 +113,7 @@ async function updateUser() {
         console.error(err);
     }
 }
-//afficher palierdocument.addEventListener
+// ✅ Fonction pour récupérer les données utilisateur après connexion
 async function fetchUserData() {
     try {
         const res = await fetch("/api/user", {
@@ -116,9 +125,13 @@ async function fetchUserData() {
         const data = await res.json();
         console.log("✅ Données utilisateur récupérées :", data);
 
-        const referralSection = document.getElementById("referral-section");
-        if (referralSection) {
-            referralSection.style.display = localStorage.getItem("isAdmin") === "true" ? "none" : "block";
+        // Mettre à jour l'affichage des infos utilisateur
+        if (document.getElementById("balance")) {
+            document.getElementById("balance").textContent = data.balance + " F";
+        }
+        if (document.getElementById("tier-level")) {
+            document.getElementById("tier-level").textContent = 
+                data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
         }
     } catch (err) {
         console.error("Erreur lors de la récupération des données :", err);
@@ -382,12 +395,13 @@ async function checkWithdrawEligibility() {
 
 //cacher si solde
 
+// ✅ Vérifier si la session est valide
 async function checkSession() {
     const token = localStorage.getItem("token");
 
     if (!token) {
         console.warn("❌ Aucun token trouvé, vérification annulée.");
-        return; // ✅ Évite la boucle infinie
+        return;
     }
 
     try {
@@ -407,7 +421,6 @@ async function checkSession() {
         console.error("❌ Erreur lors de la vérification du token :", err);
     }
 }
-
 // ✅ Vérifier la session au chargement de la page
 document.addEventListener("DOMContentLoaded", checkSession);
 
@@ -423,7 +436,7 @@ document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
 
 //subbmit
 
-// ✅ Fonction de connexion
+// ✅ Fonction de connexion corrigée
 async function login() {
     const phoneNumber = document.getElementById("phoneNumber").value;
     const password = document.getElementById("password").value;
@@ -441,10 +454,11 @@ async function login() {
         if (data.token) {
             localStorage.setItem("token", data.token);
             localStorage.setItem("isAdmin", data.isAdmin ? "true" : "false");
+
             console.log("✅ Token stocké :", localStorage.getItem("token"));
             
             fetchUserData(); // ✅ Charger les infos utilisateur après connexion
-            window.location.href = "/"; // Rediriger vers la page principale
+            window.location.href = "/index.html"; // Rediriger vers la page principale
         } else {
             alert(data.error || "Erreur lors de la connexion");
         }
@@ -597,17 +611,3 @@ async function buyTier(level) {
         console.error(err);
     }
 }
-
-
-
-
-// cacher ou montrer admin btn
-document.addEventListener("DOMContentLoaded", function() {
-    let isAdmin = localStorage.getItem("isAdmin") === "true";
-    let adminBtn = document.getElementById("admin-btn");
-
-    if (adminBtn) {
-        adminBtn.style.display = isAdmin ? "block" : "none";
-    }
-});
-
