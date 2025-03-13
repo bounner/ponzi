@@ -373,30 +373,36 @@ async function register() {
 
 //cacher si solde
 async function checkWithdrawEligibility() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        console.error("❌ Aucun token trouvé, redirection vers login.");
+        alert("Session expirée. Veuillez vous reconnecter.");
+        window.location.href = "/login.html";
+        return;
+    }
+
     try {
         const res = await fetch("https://pon-app.onrender.com/api/user", {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error("Erreur lors de la récupération du solde");
+
         const data = await res.json();
+        console.log("✅ Solde récupéré :", data.balance);
 
-        const withdrawBtn = document.getElementById("withdraw-btn");
-        const withdrawWarning = document.getElementById("withdraw-warning");
-
-        if (withdrawBtn && withdrawWarning) {  // Vérifie que les éléments existent
-            if (data.balance < 7000) {
-                withdrawBtn.disabled = true;
-                withdrawWarning.style.display = "block";
-            } else {
-                withdrawBtn.disabled = false;
-                withdrawWarning.style.display = "none";
-            }
+        if (data.balance < 7000) {
+            document.getElementById("withdraw-btn").disabled = true;
+            document.getElementById("withdraw-warning").style.display = "block";
+        } else {
+            document.getElementById("withdraw-btn").disabled = false;
+            document.getElementById("withdraw-warning").style.display = "none";
         }
     } catch (err) {
         console.error("Erreur vérification solde retrait :", err);
     }
 }
+
 
 // Vérifier le solde au chargement de la page
 document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
