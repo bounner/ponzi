@@ -1,4 +1,19 @@
 /* Existing styles (unchanged) */
+#logout-btn {
+    background-color: #dc3545;  /* Rouge Bootstrap */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+#logout-btn:hover {
+    background-color: #c82333; /* Rouge plus foncé au survol */
+}
+
 body {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
     font-family: 'Poppins', sans-serif;
