@@ -9,29 +9,82 @@ function logout() {
     window.location.href = "/login.html";
 }
 
+// ✅ Fonction d'inscription
+async function register() {
+    const phoneNumber = document.getElementById("phoneNumber").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+    const referralCode = document.getElementById("referralCode")?.value || "";
+
+    if (password !== confirmPassword) {
+        alert("Les mots de passe ne correspondent pas !");
+        return;
+    }
+
+    try {
+        const res = await fetch("https://pon-app.onrender.com/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phoneNumber, email, password, referralCode })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("✅ Inscription réussie !");
+            window.location.href = "/login.html";
+        } else {
+            alert("❌ Erreur : " + data.error);
+        }
+    } catch (err) {
+        console.error("❌ Erreur lors de l'inscription :", err);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-    // ✅ Ne pas rediriger si l'utilisateur est déjà sur `login.html`
-   // ✅ Ne pas rediriger si l'utilisateur est sur `register.html` ou `login.html`
-  if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
+    if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
         console.log("❌ Aucun token trouvé, redirection vers login.");
         window.location.href = "/login.html";
     } else {
         console.log("✅ Session active !");
-        fetchUserData();
-    }
-        // ✅ Gérer le bouton "Logout" et cacher "S'inscrire"
+        // UI updates for logged-in users
         if (document.getElementById("signup-btn")) {
             document.getElementById("signup-btn").style.display = "none";
         }
         if (document.getElementById("logout-btn")) {
             document.getElementById("logout-btn").style.display = "block";
+            document.getElementById("logout-btn").addEventListener("click", () => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("isAdmin");
+                window.location.href = "/login.html";
+            });
         }
-
-        // ✅ Charger les données utilisateur
+        // Fetch user data
         fetchUserData();
+    }
+
+    function fetchUserData() {
+        fetch('/api/user', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Token invalide");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Données utilisateur:", data);
+            if (isAdmin) {
+                console.log("✅ Mode admin activé");
+                // Add admin-specific UI/logic here
+            }
+        })
+        .catch(err => {
+            console.error("Erreur:", err);
+            window.location.href = "/login.html"; // Redirect on error
+        });
     }
 });
 
@@ -378,37 +431,7 @@ function closePopup() {
     if (popup) popup.remove();
 }
 
-// ✅ Fonction d'inscription
-async function register() {
-    const phoneNumber = document.getElementById("phoneNumber").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirm-password").value;
-    const referralCode = document.getElementById("referralCode")?.value || "";
 
-    if (password !== confirmPassword) {
-        alert("Les mots de passe ne correspondent pas !");
-        return;
-    }
-
-    try {
-        const res = await fetch("https://pon-app.onrender.com/api/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ phoneNumber, email, password, referralCode })
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-            alert("✅ Inscription réussie !");
-            window.location.href = "/login.html";
-        } else {
-            alert("❌ Erreur : " + data.error);
-        }
-    } catch (err) {
-        console.error("❌ Erreur lors de l'inscription :", err);
-    }
-}
 
 
 //cacher si solde
