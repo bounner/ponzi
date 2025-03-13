@@ -3,6 +3,11 @@ let token = localStorage.getItem('token') || null;
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 console.log("✅ Vérification de la session... Token :", token, "| Admin :", isAdmin);
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAdmin");
+    window.location.href = "/login.html";
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("token");
