@@ -3,11 +3,7 @@ let token = localStorage.getItem('token') || null;
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 console.log("✅ Vérification de la session... Token :", token, "| Admin :", isAdmin);
-function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("isAdmin");
-    window.location.href = "/login.html";
-}
+
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -15,27 +11,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const isAdmin = localStorage.getItem("isAdmin") === "true";
 
     // ✅ Autoriser l'accès uniquement à login.html et register.html si l'utilisateur n'est pas connecté
-    const allowedPages = ["/login.html", "/register.html"];
-    if (!token && !allowedPages.includes(window.location.pathname)) {
+    if (!token && !["/login.html", "/register.html"].includes(window.location.pathname)) {
         console.log("❌ Aucun token trouvé, redirection vers login.");
         window.location.href = "/login.html";
         return; // ⚠️ Stopper l'exécution après la redirection
     }
 
     console.log("✅ Session active !");
-
-    // ✅ Afficher / Cacher les boutons en fonction de la connexion
-    const signupBtn = document.getElementById("signup-btn");
-    const logoutBtn = document.getElementById("logout-btn");
-
-    if (signupBtn) {
-        signupBtn.style.display = token ? "none" : "block"; // Cache "S'inscrire" si connecté
+    
+    // ✅ Gérer le bouton "Logout" et cacher "S'inscrire"
+    if (document.getElementById("signup-btn")) {
+        document.getElementById("signup-btn").style.display = "none";
     }
-    if (logoutBtn) {
-        logoutBtn.style.display = token ? "block" : "none"; // Affiche "Déconnexion" si connecté
+    if (document.getElementById("logout-btn")) {
+        document.getElementById("logout-btn").style.display = "block";
     }
 
-    // ✅ Charger les données utilisateur uniquement si un token est présent
+    // ✅ Charger les données utilisateur seulement si on est connecté
     if (token) {
         fetchUserData();
     }
@@ -63,6 +55,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAdmin");
+    window.location.href = "/login.html";
+}
 
 // ✅ Fonction pour récupérer les données utilisateur après connexion
 async function fetchUserData() {
