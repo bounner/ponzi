@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-
+// ✅ Correction de la récupération des utilisateurs
 async function fetchUsers() {
     try {
         const res = await fetch('/api/admin/users', {
@@ -51,6 +51,7 @@ async function fetchUsers() {
     }
 }
 
+
 // ✅ Correction de la soumission du dépôt
 async function submitDeposit() {
     const amount = document.getElementById("depositAmount").value;
@@ -65,44 +66,6 @@ async function submitDeposit() {
         const res = await fetch('/api/deposit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ amount, depositNumber })
-        });
-
-        const data = await res.json();
-        alert(data.message || "Votre dépôt a été pris en compte. Il sera validé par un administrateur.");
-    } catch (err) {
-        alert("Erreur lors de la soumission du dépôt.");
-        console.error(err);
-    }
-}
-
-
-//submitdeposite
-async function submitDeposit() {
-    const amountField = document.getElementById("depositAmount");
-    const depositNumberField = document.getElementById("depositNumber");
-
-    if (!amountField || !depositNumberField) {
-        console.error("❌ Les champs de dépôt sont introuvables !");
-        alert("Une erreur s'est produite. Essayez de recharger la page.");
-        return;
-    }
-
-    const amount = amountField.value;
-    const depositNumber = depositNumberField.value;
-
-    if (!amount || !depositNumber) {
-        alert("Veuillez remplir tous les champs !");
-        return;
-    }
-
-    try {
-        const res = await fetch('/api/deposit', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'Authorization': `Bearer ${localStorage.getItem("token")}` 
-            },
             body: JSON.stringify({ amount, depositNumber })
         });
 
@@ -188,6 +151,23 @@ async function fetchReferrals() {
         console.log("✅ Données parrainages :", data);
     } catch (err) {
         console.error("Erreur lors de la récupération des parrainages :", err);
+    }
+}
+
+// ✅ Correction du bouton "Confirmer" qui reste vert après refresh
+async function confirmDeposit(depositId) {
+    if (!confirm("Confirmer ce dépôt ?")) return;
+
+    try {
+        localStorage.setItem(`deposit-${depositId}`, "confirmed");
+        document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
+        document.getElementById(`btn-${depositId}`).classList.remove("btn-warning");
+        document.getElementById(`btn-${depositId}`).classList.add("btn-success");
+        document.getElementById(`btn-${depositId}`).textContent = "Confirmé ✅";
+        document.getElementById(`btn-${depositId}`).disabled = true;
+    } catch (err) {
+        console.error("Erreur confirmation dépôt :", err);
+        alert("Erreur lors de la confirmation.");
     }
 }
 
@@ -379,27 +359,15 @@ async function register() {
         alert("Impossible de contacter le serveur.");
     }
 }
-
-//cacher si solde
 async function checkWithdrawEligibility() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        console.error("❌ Aucun token trouvé, redirection vers login.");
-        alert("Session expirée. Veuillez vous reconnecter.");
-        window.location.href = "/login.html";
-        return;
-    }
+    if (!token) return;
 
     try {
-        const res = await fetch("https://pon-app.onrender.com/api/user", {
+        const res = await fetch("/api/user", {
             headers: { "Authorization": `Bearer ${token}` }
         });
 
-        if (!res.ok) throw new Error("Erreur lors de la récupération du solde");
-
         const data = await res.json();
-        console.log("✅ Solde récupéré :", data.balance);
-
         if (data.balance < 7000) {
             document.getElementById("withdraw-btn").disabled = true;
             document.getElementById("withdraw-warning").style.display = "block";
@@ -411,7 +379,8 @@ async function checkWithdrawEligibility() {
         console.error("Erreur vérification solde retrait :", err);
     }
 }
-console.log("🔍 Token actuel dans localStorage :", localStorage.getItem("token"));
+
+//cacher si solde
 
 async function checkSession() {
     const token = localStorage.getItem("token");
@@ -450,24 +419,6 @@ document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
 
 // Vérifier le solde au chargement de la page
 document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
-
-
-//confirm deposite
-async function confirmDeposit(depositId) {
-    if (!confirm("Confirmer ce dépôt ?")) return;
-
-    try {
-        localStorage.setItem(`deposit-${depositId}`, "confirmed");
-        document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
-        document.getElementById(`btn-${depositId}`).classList.remove("btn-warning");
-        document.getElementById(`btn-${depositId}`).classList.add("btn-success");
-        document.getElementById(`btn-${depositId}`).textContent = "Confirmé ✅";
-        document.getElementById(`btn-${depositId}`).disabled = true;
-    } catch (err) {
-        console.error("Erreur confirmation dépôt :", err);
-        alert("Erreur lors de la confirmation.");
-    }
-}
 
 
 //subbmit
