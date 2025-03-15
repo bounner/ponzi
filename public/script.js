@@ -6,31 +6,32 @@ console.log("✅ Vérification de la session... Token :", token, "| Admin :", is
 
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const token = localStorage.getItem("token");
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
-    const currentPath = window.location.pathname;
-    const allowedPages = ["/login.html", "/register.html"];
-
-    // ✅ Vérifier si l'utilisateur doit être redirigé
-    if (!token && !allowedPages.includes(currentPath)) {
-        console.log("❌ Aucun token trouvé, redirection vers login.");
-        window.location.href = "/login.html";
-        return; // Arrêter l'exécution ici pour éviter les erreurs
-    }
-
-    console.log("✅ Session active !");
-
-    // ✅ Gérer l'affichage des boutons "S'inscrire" et "Déconnexion"
-    const signupBtn = document.getElementById("signup-btn");
-    const logoutBtn = document.getElementById("logout-btn");
-
-    if (signupBtn) signupBtn.style.display = token ? "none" : "block";
-    if (logoutBtn) logoutBtn.style.display = token ? "block" : "none";
-
-    // ✅ Charger les données utilisateur seulement si connecté
+document.addEventListener("DOMContentLoaded", function() {
     if (token) {
         fetchUserData();
+        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+            document.getElementById('admin-btn').style.display = isAdmin ? 'inline-block' : 'none';
+            document.getElementById('signup-btn').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'block';
+        }
+        if (window.location.pathname === '/admin.html') {
+            if (isAdmin) fetchUsers();
+            else {
+                alert('Accès réservé aux administrateurs');
+                window.location.href = '/login.html';
+            }
+        }
+        if (window.location.pathname === '/referrals.html') fetchReferrals();
+        if (window.location.pathname === '/mining.html') fetchMiningData();
+    } else {
+        if (document.getElementById('signup-btn')) {
+            document.getElementById('signup-btn').style.display = 'block';
+            document.getElementById('logout-btn').style.display = 'none';
+        }
+        if (window.location.pathname === '/admin.html' || window.location.pathname === '/mining.html') {
+            alert('Veuillez vous connecter');
+            window.location.href = '/login.html';
+        }
     }
 });
 
