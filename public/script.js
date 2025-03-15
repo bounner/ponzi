@@ -485,18 +485,25 @@ async function checkSession() {
 
 function checkWithdrawEligibility() {
     const balanceElement = document.getElementById("balance");
+    const amountElement = document.getElementById("amount");
     const withdrawBtn = document.getElementById("withdraw-btn");
 
-    if (!balanceElement || !withdrawBtn) return; // ✅ Empêcher les erreurs si les éléments ne sont pas sur la page
+    if (!balanceElement || !withdrawBtn || !amountElement) return; // ✅ Empêcher les erreurs si les éléments ne sont pas sur la page
 
     const balance = parseFloat(balanceElement.textContent.replace(" F", "")) || 0;
+    const amount = parseFloat(amountElement.value) || 0;
 
-    if (balance < 7000) {
-        alert("❌ Solde insuffisant pour effectuer un retrait !");
-        return; // ✅ Stopper ici pour éviter d'exécuter `withdraw()` si solde insuffisant
+    if (amount < 7000) {
+        alert("❌ Le montant minimum de retrait est de 7000 F !");
+        return; // ✅ Stopper ici
     }
 
-    withdraw(); // ✅ Si le solde est suffisant, alors exécuter `withdraw()`
+    if (balance < amount) {
+        alert("❌ Solde insuffisant pour effectuer ce retrait !");
+        return; // ✅ Stopper ici
+    }
+
+    withdraw(); // ✅ Si tout est bon, exécuter le retrait
 }
 
 
