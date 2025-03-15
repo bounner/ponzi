@@ -6,9 +6,10 @@
 const token = localStorage.getItem("token");
 const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-
-
 document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+    const isAdmin = localStorage.getItem("isAdmin") === "true"; // ✅ Convertir en booléen
+
     if (!token) {
         alert("❌ Accès refusé. Veuillez vous connecter.");
         window.location.href = "/login.html";
@@ -22,16 +23,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     console.log("✅ Accès admin accordé !");
-    fetchUsers(); // ✅ Charger les utilisateurs
-    fetchDepositRequests(); // ✅ Charger les dépôts
+    
+    // ✅ Charger les données seulement si l'accès est autorisé
+    fetchUsers();
+    fetchDepositRequests();
+
+    // ✅ Vérifier les dépôts confirmés
+    setTimeout(() => {
+        document.querySelectorAll("[id^=btn-]").forEach(btn => {
+            const depositId = btn.id.replace("btn-", "");
+            if (localStorage.getItem(`deposit-${depositId}`) === "confirmed") {
+                btn.classList.remove("btn-warning");
+                btn.classList.add("btn-success");
+                btn.textContent = "Confirmé ✅";
+                btn.disabled = true;
+                document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
+            }
+        });
+    }, 1000);
 });
 
 // ✅ Récupérer la liste des utilisateurs
-
 async function fetchUsers() {
     try {
         const res = await fetch('/api/admin/users', {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
         });
 
         if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
@@ -41,7 +57,6 @@ async function fetchUsers() {
 
         const tbody = document.getElementById('users');
 
-        // ✅ Vérifier si l'élément existe avant de modifier son `innerHTML`
         if (!tbody) {
             console.error("❌ L'élément #users est introuvable dans admin.html !");
             return;
@@ -66,18 +81,6 @@ async function fetchUsers() {
 }
 
 
-// ✅ Vérifier si l'utilisateur est admin
-document.addEventListener("DOMContentLoaded", function () {
-    if (isAdmin) {
-        console.log("🔹 Admin connecté, chargement des utilisateurs...");
-        fetchUsers();
-        fetchDepositRequests(); // Charger les requêtes de dépôt
-    } else {
-        console.log("❌ Accès refusé, redirection vers l'accueil");
-        alert("Accès refusé !");
-        window.location.href = "/index.html";
-        return; // ✅ Évite d'exécuter le reste du script si l'accès est refusé
-    }
 
     // ✅ Vérifier dans localStorage les dépôts déjà confirmés
     setTimeout(() => {
