@@ -6,59 +6,66 @@ console.log("✅ Vérification de la session... Token :", token, "| Admin :", is
 
 
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const currentPath = window.location.pathname;
+    const allowedPages = ["/login.html", "/register.html"];
+
+    console.log("✅ Vérification session... Token :", token);
+
+    // ✅ Vérifier si le token est présent, sinon rediriger sauf pour les pages login et register
+    if (!token && !allowedPages.includes(currentPath)) {
+        console.log("❌ Aucun token trouvé, redirection vers login.");
+        window.location.href = "/login.html";
+        return;
+    }
+
+    console.log("✅ Session active !");
+
+    // ✅ Gestion des boutons "S'inscrire" et "Déconnexion"
+    const signupBtn = document.getElementById("signup-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    if (signupBtn) signupBtn.style.display = token ? "none" : "block";
+    if (logoutBtn) logoutBtn.style.display = token ? "block" : "none";
+
+    // ✅ Chargement des données utilisateur après connexion
     if (token) {
         fetchUserData();
-        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-            document.getElementById('admin-btn').style.display = isAdmin ? 'inline-block' : 'none';
-            document.getElementById('signup-btn').style.display = 'none';
-            document.getElementById('logout-btn').style.display = 'block';
-        }
-        if (window.location.pathname === '/admin.html') {
-            if (isAdmin) fetchUsers();
-            else {
-                alert('Accès réservé aux administrateurs');
-                window.location.href = '/login.html';
-            }
-        }
-        if (window.location.pathname === '/referrals.html') fetchReferrals();
-        if (window.location.pathname === '/mining.html') fetchMiningData();
-    } else {
-        if (document.getElementById('signup-btn')) {
-            document.getElementById('signup-btn').style.display = 'block';
-            document.getElementById('logout-btn').style.display = 'none';
-        }
-        if (window.location.pathname === '/admin.html' || window.location.pathname === '/mining.html') {
-            alert('Veuillez vous connecter');
-            window.location.href = '/login.html';
-        }
     }
 });
 
-
-
-    function fetchUserData() {
-        fetch('/api/user', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("Token invalide");
-            return response.json();
-        })
-        .then(data => {
-            console.log("Données utilisateur:", data);
-            if (isAdmin) {
-                console.log("✅ Mode admin activé");
-                // Add admin-specific UI/logic here
-            }
-        })
-        .catch(err => {
-            console.error("Erreur:", err);
-            window.location.href = "/login.html"; // Redirect on error
+// ✅ Fonction pour récupérer les infos de l'utilisateur
+async function fetchUserData() {
+    try {
+        const res = await fetch("/api/user", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
-    }
-});
 
+        if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
+
+        const data = await res.json();
+        console.log("✅ Données utilisateur récupérées :", data);
+
+        // ✅ Affichage des informations utilisateur
+        document.getElementById("welcome-msg").textContent = `Bienvenue, ${data.phoneNumber} !`;
+        document.getElementById("balance").textContent = `${data.balance} F`;
+        document.getElementById("tier-level").textContent = 
+            data.tierLevel > 0 ? `Palier ${data.tierLevel}` : "Aucun palier actif";
+
+        if (data.referralLink) {
+            document.getElementById("ref-link").textContent = data.referralLink;
+        } else {
+            document.getElementById("ref-link").textContent = "Non disponible";
+        }
+
+    } catch (err) {
+        console.error("❌ Erreur lors de la récupération des données :", err);
+    }
+}
+
+// ✅ Fonction de déconnexion
 function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("isAdmin");
