@@ -2,8 +2,10 @@
 //const token = localStorage.getItem("token");
 //const isAdmin = localStorage.getItem("isAdmin") === "true"; // Convertir en booléen
 
-const token = sessionStorage.getItem("token");
-const isAdmin = sessionStorage.getItem("isAdmin") === "true";
+// ✅ Stockage cohérent avec le reste du site
+const token = localStorage.getItem("token");
+const isAdmin = localStorage.getItem("isAdmin") === "true";
+
 
 
 if (!token) {
