@@ -482,19 +482,23 @@ async function checkSession() {
         console.error("❌ Erreur lors de la vérification du token :", err);
     }
 }
-// ✅ Vérifier la session au chargement de la page
-document.addEventListener("DOMContentLoaded", checkSession);
+
 function checkWithdrawEligibility() {
-    const balance = parseFloat(document.getElementById("balance")?.textContent || "0");
+    const balanceElement = document.getElementById("balance");
     const withdrawBtn = document.getElementById("withdraw-btn");
+
+    if (!balanceElement || !withdrawBtn) return; // ✅ Empêcher les erreurs si les éléments ne sont pas sur la page
+
+    const balance = parseFloat(balanceElement.textContent.replace(" F", "")) || 0;
 
     if (balance < 7000) {
         alert("❌ Solde insuffisant pour effectuer un retrait !");
-        if (withdrawBtn) withdrawBtn.disabled = true;
-    } else {
-        if (withdrawBtn) withdrawBtn.disabled = false;
+        return; // ✅ Stopper ici pour éviter d'exécuter `withdraw()` si solde insuffisant
     }
+
+    withdraw(); // ✅ Si le solde est suffisant, alors exécuter `withdraw()`
 }
+
 
 
 // Vérifier le solde au chargement de la page
