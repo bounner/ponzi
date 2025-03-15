@@ -64,6 +64,10 @@ async function fetchUserData() {
         console.error("❌ Erreur lors de la récupération des données :", err);
     }
 }
+fetchUserData().then(() => {
+    checkWithdrawEligibility();
+});
+
 
 // ✅ Fonction de déconnexion
 function logout() {
@@ -480,6 +484,17 @@ async function checkSession() {
 }
 // ✅ Vérifier la session au chargement de la page
 document.addEventListener("DOMContentLoaded", checkSession);
+function checkWithdrawEligibility() {
+    const balance = parseFloat(document.getElementById("balance")?.textContent || "0");
+    const withdrawBtn = document.getElementById("withdraw-btn");
+
+    if (balance < 7000) {
+        alert("❌ Solde insuffisant pour effectuer un retrait !");
+        if (withdrawBtn) withdrawBtn.disabled = true;
+    } else {
+        if (withdrawBtn) withdrawBtn.disabled = false;
+    }
+}
 
 
 // Vérifier le solde au chargement de la page
