@@ -491,7 +491,45 @@ document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
 document.addEventListener("DOMContentLoaded", checkWithdrawEligibility);
 
 
-//subbmit
+//retrait
+
+async function withdraw() {
+    const amount = document.getElementById("amount").value;
+    const withdrawNumber = document.getElementById("withdrawNumber").value;
+    const withdrawMethod = document.getElementById("withdrawMethod").value;
+
+    if (!amount || !withdrawNumber || !withdrawMethod) {
+        alert("❌ Veuillez remplir tous les champs !");
+        return;
+    }
+
+    if (parseFloat(amount) < 7000) {
+        alert("❌ Montant minimum de retrait : 7000 F");
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/withdraw", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify({ amount, withdrawNumber, withdrawMethod })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("✅ Demande de retrait soumise avec succès !");
+            fetchUserData(); // Mise à jour du solde
+        } else {
+            alert("❌ Erreur : " + data.error);
+        }
+    } catch (err) {
+        console.error("❌ Erreur lors du retrait :", err);
+    }
+}
+
 
 // ✅ Fonction de connexion corrigée
 async function login() {
