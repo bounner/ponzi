@@ -77,25 +77,23 @@ app.post('/api/register', async (req, res) => {
 });
 
 // Connexion
-app.post('/api/login', async (req, res) => {
+app.post("/api/login", async (req, res) => {
     try {
         const { phoneNumber, password } = req.body;
         const user = await User.findOne({ phoneNumber });
 
-        if (!user) return res.status(401).json({ error: 'Numéro incorrect' });
-
-        if (user.password !== password) return res.status(401).json({ error: 'Mot de passe incorrect' });
+        if (!user) return res.status(401).json({ error: "Numéro incorrect" });
+        if (user.password !== password) return res.status(401).json({ error: "Mot de passe incorrect" });
 
         const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-        console.log(`🔹 Connexion réussie : ${user.phoneNumber} (Admin: ${user.isAdmin})`);
-
-        res.json({ token, isAdmin: user.isAdmin, referralLink: user.referralLink });
+        res.json({ token, isAdmin: user.isAdmin }); // ✅ Envoi bien `isAdmin`
     } catch (err) {
-        console.error('Erreur connexion:', err);
-        res.status(500).json({ error: 'Erreur serveur lors de la connexion' });
+        console.error("Erreur connexion:", err);
+        res.status(500).json({ error: "Erreur serveur" });
     }
 });
+
 
 
 app.post('/api/buy-tier', authenticate, async (req, res) => {
