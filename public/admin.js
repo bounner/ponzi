@@ -8,10 +8,23 @@ const isAdmin = localStorage.getItem("isAdmin") === "true";
 
 
 
-if (!token) {
-    alert("Accès refusé. Veuillez vous connecter.");
-    window.location.href = "/login.html"; // Redirige vers la connexion si pas connecté
-}
+document.addEventListener("DOMContentLoaded", function () {
+    if (!token) {
+        alert("❌ Accès refusé. Veuillez vous connecter.");
+        window.location.href = "/login.html";
+        return;
+    }
+
+    if (!isAdmin) {
+        alert("❌ Accès refusé. Vous n'êtes pas administrateur.");
+        window.location.href = "/index.html";
+        return;
+    }
+
+    console.log("✅ Accès admin accordé !");
+    fetchUsers(); // ✅ Charger les utilisateurs
+    fetchDepositRequests(); // ✅ Charger les dépôts
+});
 
 // ✅ Récupérer la liste des utilisateurs
 
