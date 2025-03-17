@@ -1,3 +1,23 @@
+
+table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table td, table th {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    table td, table th {
+        font-size: 12px;
+    }
+    .btn {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}
+
 /* Existing styles (unchanged) */
 #logout-btn {
     background-color: #dc3545;  /* Rouge Bootstrap */
