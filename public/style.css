@@ -1,145 +1,99 @@
-/* ====== GLOBAL ====== */
+/* --- Reset couleurs et base --- */
 body {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    background: #fff;
     font-family: 'Poppins', sans-serif;
-    color: #e0e0e0;
-    min-height: 100vh;
+    color: #000;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
 }
 
-/* ====== HEADINGS ====== */
-h1 {
-    font-size: clamp(1.5rem, 4vw, 3rem);
-    font-weight: 700;
-    margin-bottom: clamp(10px, 2vw, 25px);
-    color: #00d4ff;
-    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-    text-align: center;
+/* --- Titres et textes en noir --- */
+h1, h2, h3, h4, h5, h6, p, a, label, span {
+    color: #000 !important;
 }
 
-h3 {
-    color: #e94560;
-    font-weight: 600;
-    text-shadow: 0 0 5px rgba(233, 69, 96, 0.3);
-    font-size: clamp(1rem, 3vw, 1.8rem);
-}
-
-/* ====== BUTTONS ====== */
-.btn {
-    padding: clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px);
+/* --- Boutons "Accueil" et "Retour" --- */
+.home-icon, .back-icon {
+    position: fixed;
+    top: clamp(5px, 1vh, 15px);
+    background: rgba(0, 212, 255, 0.8);
+    color: #fff;
+    padding: clamp(6px, 1vw, 10px) clamp(10px, 2vw, 15px);
+    border-radius: 8px;
+    text-decoration: none;
     font-size: clamp(0.8rem, 2vw, 1rem);
-    font-weight: 600;
-    border-radius: 25px;
-    border: none;
-    transition: all 0.3s ease;
-    margin: clamp(5px, 1vw, 10px);
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    transition: 0.3s;
+    z-index: 1000;
+}
+.home-icon { left: clamp(5px, 1vw, 15px); }
+.back-icon { right: clamp(5px, 1vw, 15px); }
+
+/* --- Animation formulaire --- */
+.card {
+    animation: fadeInUp 0.6s ease forwards;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    padding: clamp(10px, 2vw, 20px);
+}
+
+/* --- Inputs --- */
+input.form-control {
+    padding: 14px;
+    font-size: 16px;
+    background: #f7f7f7;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+/* --- Boutons général --- */
+button.btn {
+    padding: 14px;
+    font-size: 16px;
     background: linear-gradient(90deg, #00d4ff, #e94560);
     color: #fff;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
     width: 100%;
-    box-sizing: border-box;
 }
-
-.btn:hover, .btn:focus {
-    background-color: #0d6efd;
+button.btn:hover {
+    background: #0d6efd;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-.btn:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.btn-sm {
-    padding: clamp(5px, 1vw, 8px) clamp(10px, 2vw, 12px);
-    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
-}
-
-/* ====== LOGOUT BUTTON ====== */
+/* --- Bouton logout spécifique --- */
 #logout-btn {
     background-color: #dc3545;
-    color: white;
-    border: none;
+    color: #fff;
     padding: 10px 16px;
     border-radius: 8px;
-    font-size: 16px;
+    border: none;
     transition: all 0.3s ease;
 }
 
-#logout-btn:hover, #logout-btn:focus {
-    background-color: #c82333;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-#logout-btn:active {
-    transform: scale(0.97);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* ====== FORMS ====== */
-input.form-control {
-    border-radius: 10px;
-    padding: clamp(8px, 1.5vw, 12px);
-    font-size: clamp(0.8rem, 2vw, 1rem);
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-    transition: all 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* ====== CARD / FORM CONTAINER ====== */
-.card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    padding: clamp(10px, 2vw, 20px);
-    transition: transform 0.3s ease;
-    width: 100%;
-    margin: 0 auto;
-    animation: fadeInUp 0.6s ease forwards;
-}
-
-/* ====== ACTION BUTTONS FLEX ====== */
-.action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(5px, 1vw, 10px);
-    justify-content: center;
-}
-
-.action-buttons .btn {
-    flex: 1 1 clamp(80px, 30%, 120px);
-    margin: 0;
-}
-
-/* ====== RESPONSIVE ====== */
+/* --- Responsive jusqu'à un Galaxy S21 --- */
 @media (max-width: 576px) {
     .card {
         margin: 10px;
         max-width: 100%;
     }
-    .action-buttons {
-        flex-direction: column;
-        align-items: stretch;
+    .home-icon, .back-icon {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    button.btn {
+        padding: 12px;
+        font-size: 15px;
     }
 }
 
-/* ====== ANIMATION ====== */
+/* --- Animation fade-in --- */
 @keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
