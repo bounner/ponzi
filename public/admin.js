@@ -6,10 +6,10 @@
 const token = localStorage.getItem("token");
 const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-document.addEventListener("DOMContentLoaded", function () {
-    const token = localStorage.getItem("token");
-    const isAdmin = localStorage.getItem("isAdmin") === "true"; // ✅ Convertir en booléen
+const token = localStorage.getItem("token");
+const isAdmin = localStorage.getItem("isAdmin") === "true";
 
+document.addEventListener("DOMContentLoaded", function () {
     if (!token) {
         alert("❌ Accès refusé. Veuillez vous connecter.");
         window.location.href = "/login.html";
@@ -23,10 +23,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     console.log("✅ Accès admin accordé !");
-    
-    // ✅ Charger les données seulement si l'accès est autorisé
     fetchUsers();
     fetchDepositRequests();
+});
+
+    // ✅ Charger les données seulement si l'accès est autorisé
+    //fetchUsers();
+    //fetchDepositRequests();
 
     // ✅ Vérifier les dépôts confirmés
     setTimeout(() => {
