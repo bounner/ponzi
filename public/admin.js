@@ -1,4 +1,4 @@
-//const token = localStorage.getItem("token");
+const token = localStorage.getItem("token");
 const isAdmin = localStorage.getItem("isAdmin") === "true";
 
 document.addEventListener("DOMContentLoaded", function () {
