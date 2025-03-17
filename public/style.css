@@ -1,19 +1,4 @@
-/* Existing styles (unchanged) */
-#logout-btn {
-    background-color: #dc3545;  /* Rouge Bootstrap */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-}
-
-#logout-btn:hover {
-    background-color: #c82333; /* Rouge plus foncé au survol */
-}
-
+/* 🌌 Fond général & typo */
 body {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
     font-family: 'Poppins', sans-serif;
@@ -24,195 +9,30 @@ body {
     overflow-x: hidden;
 }
 
-.container {
-    width: 90%;
-    margin: 0 auto;
-    padding: clamp(10px, 2vw, 30px);
-    box-sizing: border-box;
-}
-
-h1 {
-    font-size: clamp(1.5rem, 4vw, 3rem);
-    font-weight: 700;
-    margin-bottom: clamp(10px, 2vw, 25px);
-    color: #00d4ff;
-    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-    text-align: center;
-}
-
-h3 {
-    color: #e94560;
-    font-weight: 600;
-    text-shadow: 0 0 5px rgba(233, 69, 96, 0.3);
-    font-size: clamp(1rem, 3vw, 1.8rem);
-}
-
-.btn {
-    padding: clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px);
-    font-size: clamp(0.8rem, 2vw, 1rem);
-    font-weight: 600;
-    border-radius: 25px;
-    border: none;
-    transition: all 0.3s ease;
-    margin: clamp(5px, 1vw, 10px);
-    background: linear-gradient(90deg, #00d4ff, #e94560);
-    color: #fff;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.btn-sm {
-    padding: clamp(5px, 1vw, 8px) clamp(10px, 2vw, 12px);
-    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
-}
-
-/* New styles for responsive action buttons */
-.action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(5px, 1vw, 10px);
-    justify-content: center;
-}
-
-.action-buttons .btn {
-    flex: 1 1 clamp(80px, 30%, 120px); /* Flexible width, min 80px, max 120px */
-    margin: 0; /* Override default btn margin */
-    padding: clamp(5px, 1vw, 8px) clamp(8px, 1.5vw, 12px);
-    font-size: clamp(0.6rem, 1.2vw, 0.9rem);
-}
-
-@media (max-width: 576px) {
-    .action-buttons {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .action-buttons .btn {
-        flex: 1 1 auto; /* Full width on small screens */
-        width: 100%;
-    }
-}
-
-.table td {
-    padding: clamp(8px, 1.5vw, 15px);
-    font-size: clamp(0.7rem, 1.5vw, 1rem);
-    white-space: nowrap;
-}
-
-/* Ensure table responsiveness */
-.table-responsive {
-    overflow-x: auto;
-}
-
-/* Rest of your existing styles (unchanged) */
-.card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    padding: clamp(10px, 2vw, 20px);
-    transition: transform 0.3s ease;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.form-control {
-    border-radius: 10px;
-    padding: clamp(8px, 1.5vw, 12px);
-    font-size: clamp(0.8rem, 2vw, 1rem);
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e0e0e0;
-    transition: all 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.home-icon, .back-icon {
-    position: fixed;
-    top: clamp(5px, 1vh, 15px);
-    left: clamp(5px, 1vw, 15px);
-    background: rgba(0, 212, 255, 0.8);
-    color: white;
-    padding: clamp(6px, 1vw, 10px) clamp(10px, 2vw, 15px);
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: clamp(0.8rem, 2vw, 1rem);
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-    transition: 0.3s;
-    z-index: 1000;
-}
-
-.back-icon {
-    left: auto;
-    right: clamp(5px, 1vw, 15px);
-}
-
-body {
-    color: #000; /* Texte en noir */
-    background-color: #fff; /* Fond blanc */
-}
-
-h1, h2, h3, h4, h5, h6, p, a, label, span {
-    color: #000 !important; /* Force le noir */
-}
-.popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    z-index: 1000;
-}
-.popup input {
-    width: 100%;
-    padding: 8px;
-    margin: 10px 0;
-    text-align: center;
-}
-.popup button {
-    background-color: #000;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-.popup button:disabled {
-    background-color: #666;
-    cursor: default;
-}
-
-/* Animation fade-in */
+/* ✅ Effet fade-in */
 @keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Formulaire animé */
+/* Carte de formulaire animée */
 .card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
     animation: fadeInUp 0.6s ease forwards;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    color: #000;
 }
 
-/* Input & bouton optimisés */
+/* Input */
 input.form-control {
     padding: 14px;
     font-size: 16px;
+    border-radius: 6px;
 }
 
+/* Boutons généraux */
 button.btn {
     padding: 14px;
     font-size: 16px;
@@ -220,7 +40,7 @@ button.btn {
     border-radius: 8px;
 }
 
-/* Hover effet pro */
+/* Hover PC / mobile */
 button.btn:hover,
 button.btn:focus {
     background-color: #0d6efd;
@@ -234,7 +54,7 @@ button.btn:active {
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-/* Logout spécial */
+/* Bouton logout */
 #logout-btn {
     background-color: #dc3545;
     color: #fff;
@@ -256,11 +76,24 @@ button.btn:active {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* ✅ Mobile-friendly */
+/* Home et retour */
+a.home-icon, a.back-icon {
+    position: absolute;
+    top: 20px;
+    font-size: 18px;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+a.home-icon { left: 20px; }
+a.back-icon { right: 20px; }
+
+a.home-icon:hover, a.back-icon:hover { text-decoration: underline; }
+
+/* Responsive mobile */
 @media (max-width: 576px) {
     .card {
         margin: 10px;
         max-width: 100%;
     }
 }
-
