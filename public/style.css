@@ -1,4 +1,4 @@
-/* 🌌 Fond général & typo */
+/* ====== GLOBAL ====== */
 body {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
     font-family: 'Poppins', sans-serif;
@@ -9,63 +9,67 @@ body {
     overflow-x: hidden;
 }
 
-/* ✅ Effet fade-in */
-@keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
+/* ====== HEADINGS ====== */
+h1 {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 700;
+    margin-bottom: clamp(10px, 2vw, 25px);
+    color: #00d4ff;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    text-align: center;
 }
 
-/* Carte de formulaire animée */
-.card {
-    background: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
-    animation: fadeInUp 0.6s ease forwards;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    color: #000;
+h3 {
+    color: #e94560;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(233, 69, 96, 0.3);
+    font-size: clamp(1rem, 3vw, 1.8rem);
 }
 
-/* Input */
-input.form-control {
-    padding: 14px;
-    font-size: 16px;
-    border-radius: 6px;
-}
-
-/* Boutons généraux */
-button.btn {
-    padding: 14px;
-    font-size: 16px;
+/* ====== BUTTONS ====== */
+.btn {
+    padding: clamp(8px, 1.5vw, 12px) clamp(16px, 3vw, 24px);
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    font-weight: 600;
+    border-radius: 25px;
+    border: none;
     transition: all 0.3s ease;
-    border-radius: 8px;
+    margin: clamp(5px, 1vw, 10px);
+    background: linear-gradient(90deg, #00d4ff, #e94560);
+    color: #fff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* Hover PC / mobile */
-button.btn:hover,
-button.btn:focus {
+.btn:hover, .btn:focus {
     background-color: #0d6efd;
-    color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-button.btn:active {
+.btn:active {
     transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-/* Bouton logout */
+.btn-sm {
+    padding: clamp(5px, 1vw, 8px) clamp(10px, 2vw, 12px);
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+}
+
+/* ====== LOGOUT BUTTON ====== */
 #logout-btn {
     background-color: #dc3545;
-    color: #fff;
+    color: white;
+    border: none;
     padding: 10px 16px;
     border-radius: 8px;
-    border: none;
+    font-size: 16px;
     transition: all 0.3s ease;
 }
 
-#logout-btn:hover,
-#logout-btn:focus {
+#logout-btn:hover, #logout-btn:focus {
     background-color: #c82333;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -76,24 +80,66 @@ button.btn:active {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Home et retour */
-a.home-icon, a.back-icon {
-    position: absolute;
-    top: 20px;
-    font-size: 18px;
-    color: #ffffff;
-    text-decoration: none;
+/* ====== FORMS ====== */
+input.form-control {
+    border-radius: 10px;
+    padding: clamp(8px, 1.5vw, 12px);
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-a.home-icon { left: 20px; }
-a.back-icon { right: 20px; }
+/* ====== CARD / FORM CONTAINER ====== */
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    padding: clamp(10px, 2vw, 20px);
+    transition: transform 0.3s ease;
+    width: 100%;
+    margin: 0 auto;
+    animation: fadeInUp 0.6s ease forwards;
+}
 
-a.home-icon:hover, a.back-icon:hover { text-decoration: underline; }
+/* ====== ACTION BUTTONS FLEX ====== */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(5px, 1vw, 10px);
+    justify-content: center;
+}
 
-/* Responsive mobile */
+.action-buttons .btn {
+    flex: 1 1 clamp(80px, 30%, 120px);
+    margin: 0;
+}
+
+/* ====== RESPONSIVE ====== */
 @media (max-width: 576px) {
     .card {
         margin: 10px;
         max-width: 100%;
+    }
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* ====== ANIMATION ====== */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
