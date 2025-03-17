@@ -4,6 +4,32 @@ let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 console.log("✅ Vérification de la session... Token :", token, "| Admin :", isAdmin);
 
+document.addEventListener("DOMContentLoaded", function () {
+    const token = localStorage.getItem("token");
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const currentPath = window.location.pathname;
+    const allowedPages = ["/login.html", "/register.html"];
+
+    console.log("✅ Vérification session... Token :", token, "| Admin :", isAdmin);
+
+    // Rediriger vers login si pas connecté, sauf pages autorisées
+    if (!token && !allowedPages.includes(currentPath)) {
+        console.log("❌ Aucun token trouvé, redirection vers login.");
+        window.location.href = "/login.html";
+        return;
+    }
+
+    // Gérer visibilité des boutons
+    const signupBtn = document.getElementById("signup-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    if (signupBtn) signupBtn.style.display = token ? "none" : "block";
+    if (logoutBtn) logoutBtn.style.display = token ? "block" : "none";
+
+    if (token) {
+        fetchUserData();
+    }
+});
 
 
 document.addEventListener("DOMContentLoaded", function () {
