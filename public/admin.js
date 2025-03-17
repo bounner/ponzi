@@ -44,14 +44,14 @@ async function fetchUsers() {
         if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
 
         const users = await res.json();
-        const tbody = document.getElementById('users');
+        const tbodyUsers = document.getElementById('users'); // ✅ Pour la table utilisateurs
 
-        if (!tbody) {
+        if (!tbodyUsers) {
             console.error("❌ L'élément #users est introuvable dans admin.html !");
             return;
         }
 
-        tbody.innerHTML = users.map(u => 
+        tbodyUsers.innerHTML = users.map(u =>
             `<tr>
                 <td>${u._id}</td>
                 <td>${u.phoneNumber}</td>
@@ -64,10 +64,40 @@ async function fetchUsers() {
                 </td>
             </tr>`
         ).join('');
+
     } catch (err) {
         console.error('Erreur lors de la récupération des utilisateurs:', err);
     }
 }
+
+// ✅ Récupérer les requêtes de dépôt
+async function fetchDepositRequests() {
+    try {
+        const res = await fetch('/api/admin/deposit-requests', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const tbodyDeposits = document.getElementById('deposit-requests');
+
+        if (!tbodyDeposits) {
+            console.error("❌ L'élément #deposit-requests est introuvable !");
+            return;
+        }
+
+        const deposits = await res.json();
+        tbodyDeposits.innerHTML = deposits.map(d =>
+            `<tr>
+                <td>${d.phoneNumber}</td>
+                <td>${d.amount} F</td>
+                <td>${new Date(d.date).toLocaleString()}</td>
+                <td>${d.status}</td>
+            </tr>`
+        ).join('');
+    } catch (err) {
+        console.error("Erreur récupération des requêtes :", err);
+    }
+}
+
 
 // ✅ Fetch des dépôts en attente
 async function fetchDepositRequests() {
@@ -76,32 +106,26 @@ async function fetchDepositRequests() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (!res.ok) throw new Error("Erreur lors de la récupération des requêtes");
+        const tbodyDeposits = document.getElementById('deposit-requests');
+
+        if (!tbodyDeposits) {
+            console.error("❌ L'élément #deposit-requests est introuvable !");
+            return;
+        }
 
         const deposits = await res.json();
-        const tbody = document.getElementById('deposit-requests');
-        if (!tbody) return;
-
-        tbody.innerHTML = deposits.map(d => 
+        tbodyDeposits.innerHTML = deposits.map(d =>
             `<tr>
                 <td>${d.phoneNumber}</td>
                 <td>${d.amount} F</td>
                 <td>${new Date(d.date).toLocaleString()}</td>
-                <td id="status-${d._id}">${d.status === "confirmed" ? "✅ Confirmé" : "⏳ En attente"}</td>
-                <td>
-                    <button class="btn ${d.status === "confirmed" ? "btn-success" : "btn-warning"}"
-                        onclick="confirmDeposit('${d._id}')" 
-                        id="btn-${d._id}">
-                        ${d.status === "confirmed" ? "Confirmé ✅" : "Confirmer"}
-                    </button>
-                </td>
+                <td>${d.status}</td>
             </tr>`
         ).join('');
     } catch (err) {
         console.error("Erreur récupération des requêtes :", err);
     }
 }
-
 // ✅ Confirmation de dépôt (stockage local)
 function confirmDeposit(depositId) {
     localStorage.setItem(`deposit-${depositId}`, "confirmed");
