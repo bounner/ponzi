@@ -3,7 +3,7 @@
 //const isAdmin = localStorage.getItem("isAdmin") === "true"; // Convertir en booléen
 
 // ✅ Stockage cohérent avec le reste du site
-const token = localStorage.getItem("token");
+//const token = localStorage.getItem("token");
 const isAdmin = localStorage.getItem("isAdmin") === "true";
 
 const token = localStorage.getItem("token");
