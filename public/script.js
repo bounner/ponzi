@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
 async function fetchUserData() {
     try {
         const res = await fetch("/api/user", {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+           headers: { "Authorization": localStorage.getItem("token") }
         });
 
         if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
