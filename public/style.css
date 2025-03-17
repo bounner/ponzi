@@ -121,3 +121,22 @@ button.btn:hover {
         padding: clamp(5px, 1vw, 8px) clamp(8px, 2vw, 12px);
     }
 }
+
+
+/* Style général des boutons */
+button.btn, #logout-btn {
+    background-color: #dc3545;
+    color: #fff;
+    padding: clamp(10px, 2vw, 14px);
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    transition: 0.3s ease-in-out;
+}
+
+button.btn:hover, #logout-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
