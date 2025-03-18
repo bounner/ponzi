@@ -65,9 +65,9 @@ document.addEventListener("DOMContentLoaded", function () {
 // ✅ Fonction pour récupérer les infos de l'utilisateur
 async function fetchUserData() {
     try {
-        const res = await fetch("/api/user", {
-           headers: { "Authorization": localStorage.getItem("token") }
-        });
+        const res =  await fetch("/api/user", {
+    headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+});
 
         if (!res.ok) throw new Error(`Erreur API : ${res.status}`);
 
@@ -574,7 +574,7 @@ async function withdraw() {
     }
 
     try {
-     await fetch("/api/withdraw", {
+   const res=   await fetch("/api/withdraw", {
     method: "POST",
     headers: { 
         "Content-Type": "application/json",
