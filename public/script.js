@@ -213,9 +213,9 @@ document.addEventListener("DOMContentLoaded", function() {
 // ✅ Correction de la récupération des utilisateurs
 async function fetchUsers() {
     try {
-        const res = await fetch('/api/admin/users', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+      fetch('/api/admin/users', {
+   headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+});
 
         if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
 
@@ -503,9 +503,11 @@ async function checkSession() {
     }
 
     try {
-        const res = await fetch("/api/user", {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
+        // Exemple 1 : Récupérer l'utilisateur
+const res = await fetch("/api/user", {
+    headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+});
+
 
         if (!res.ok) {
             console.warn(`❌ Token invalide (code ${res.status}), suppression du token.`);
@@ -572,14 +574,14 @@ async function withdraw() {
     }
 
     try {
-        const res = await fetch("/api/withdraw", {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify({ amount, withdrawNumber, withdrawMethod })
-        });
+     await fetch("/api/withdraw", {
+    method: "POST",
+    headers: { 
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token")
+    },
+    body: JSON.stringify({ amount, withdrawNumber, withdrawMethod })
+});
 
         const data = await res.json();
         if (res.ok) {
