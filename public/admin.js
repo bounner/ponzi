@@ -49,10 +49,10 @@ document.addEventListener("DOMContentLoaded", function () {
 // ✅ Récupérer la liste des utilisateurs
 async function fetchUsers() {
     try {
-        const res = await fetch('/api/admin/users', {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
-        });
-
+        const res =await fetch("/api/admin/users", {
+    headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+});
+        
         if (!res.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
 
         const users = await res.json();
@@ -104,9 +104,9 @@ async function fetchUsers() {
 // ✅ Récupérer la liste des demandes de dépôt
 async function fetchDepositRequests() {
     try {
-        const res = await fetch('/api/admin/deposit-requests', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await fetch("/api/admin/deposit-requests", {
+    headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+});
 
         if (!res.ok) throw new Error("Erreur lors de la récupération des requêtes");
 
@@ -183,11 +183,14 @@ async function deleteUser(userId) {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
 
     try {
-        const res = await fetch('/api/admin/delete', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ userId })
-        });
+        const res = await fetch("/api/admin/delete", {
+    method: "DELETE",
+    headers: { 
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token")
+    },
+    body: JSON.stringify({ userId })
+});
 
         const data = await res.json();
         alert(data.message || "Utilisateur supprimé !");
@@ -205,12 +208,14 @@ async function updateUser() {
     const password = document.getElementById('password').value;
 
     try {
-        const res = await fetch('/api/admin/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ userId, balance: parseFloat(balance), password })
-        });
-
+        const res = await fetch("/api/admin/update", {
+    method: "POST",
+    headers: { 
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token")
+    },
+    body: JSON.stringify({ userId, balance: parseFloat(balance), password })
+});
         const data = await res.json();
         alert(data.message || "Mise à jour réussie !");
         fetchUsers(); // Rafraîchir la liste après modification
