@@ -1,36 +1,44 @@
-// ✅ Initialisation correcte du token et de isAdmin
-let token = localStorage.getItem('token') || null;
-let isAdmin = localStorage.getItem('isAdmin') === 'true';
-
-console.log("✅ Vérification de la session... Token :", token, "| Admin :", isAdmin);
-
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true";
-    const page = window.location.pathname;
+    const currentPath = window.location.pathname;
 
     const publicPages = ["/login.html", "/register.html"];
+    const isPublicPage = publicPages.includes(currentPath);
 
-    // 🔴 Si pas de token et que ce n'est pas login/register → redirection
-    if (!token && !publicPages.includes(page)) {
-        console.log("🔴 Redirection forcée vers login...");
+    console.log("🔍 Vérification token :", token);
+
+    // ✅ Si pas de token et page privée
+    if (!token && !isPublicPage) {
+        console.log("❌ Pas de token, redirection vers login...");
         window.location.href = "/login.html";
         return;
     }
 
-    // ✅ Si l'utilisateur est déjà connecté et essaie d'aller sur /login.html → on le redirige ailleurs
-    if (token && page === "/login.html") {
+    // ✅ Si déjà connecté et sur page publique, rediriger vers l'accueil
+    if (token && isPublicPage) {
+        console.log("✅ Déjà connecté, redirection vers index...");
         window.location.href = "/index.html";
         return;
     }
 
-    // ✅ Charge uniquement fetchUserData une seule fois
+    // ✅ Afficher les boutons
     if (token) {
-        fetchUserData().then(() => {
-            if (page === "/withdraw.html") checkWithdrawEligibility();
-        });
+        if (document.getElementById("signup-btn")) {
+            document.getElementById("signup-btn").style.display = "none";
+        }
+        if (document.getElementById("logout-btn")) {
+            document.getElementById("logout-btn").style.display = "block";
+        }
+    }
+
+    // ✅ Si token valide, charger les données utilisateur
+    if (token && currentPath !== "/admin.html") {
+        fetchUserData();
     }
 });
+
+
 
 
 // ✅ Fonction déconnexion
