@@ -20,21 +20,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ✅ Si l'utilisateur est déjà connecté et essaie d'aller sur /login.html → on le redirige ailleurs
     if (token && page === "/login.html") {
-        window.location.href = "/index.html"; // Ou ton dashboard
+        window.location.href = "/index.html";
         return;
     }
 
-    // ✅ Gestion des boutons logout/signup
-    if (document.getElementById("signup-btn")) {
-        document.getElementById("signup-btn").style.display = token ? "none" : "block";
-    }
-    if (document.getElementById("logout-btn")) {
-        document.getElementById("logout-btn").style.display = token ? "block" : "none";
-    }
-
-    // ✅ Charger les données uniquement si connecté
+    // ✅ Charge uniquement fetchUserData une seule fois
     if (token) {
-        fetchUserData();
+        fetchUserData().then(() => {
+            if (page === "/withdraw.html") checkWithdrawEligibility();
+        });
     }
 });
 
@@ -121,7 +115,7 @@ async function register() {
 
 document.addEventListener("DOMContentLoaded", function() {
     if (token) {
-        fetchUserData();
+        //fetchUserData();
         if (window.location.pathname === '/admin.html') {
             if (isAdmin) fetchUsers();
             else {
