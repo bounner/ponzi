@@ -4,27 +4,40 @@ let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
 console.log("✅ Vérification de la session... Token :", token, "| Admin :", isAdmin);
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true";
-    const currentPage = window.location.pathname;
+    const page = window.location.pathname;
 
     const publicPages = ["/login.html", "/register.html"];
 
-    // 🔐 Redirection sécurisée si pas de token sur les pages privées
-    if (!token && !publicPages.includes(currentPage)) {
-        console.log("❌ Token manquant, redirection vers login");
+    // 🔴 Si pas de token et que ce n'est pas login/register → redirection
+    if (!token && !publicPages.includes(page)) {
+        console.log("🔴 Redirection forcée vers login...");
         window.location.href = "/login.html";
         return;
     }
 
-    // ✅ Gérer les boutons header
-    const signupBtn = document.getElementById("signup-btn");
-    const logoutBtn = document.getElementById("logout-btn");
+    // ✅ Si l'utilisateur est déjà connecté et essaie d'aller sur /login.html → on le redirige ailleurs
+    if (token && page === "/login.html") {
+        window.location.href = "/index.html"; // Ou ton dashboard
+        return;
+    }
 
-    if (signupBtn) signupBtn.style.display = token ? "none" : "block";
-    if (logoutBtn) logoutBtn.style.display = token ? "block" : "none";
+    // ✅ Gestion des boutons logout/signup
+    if (document.getElementById("signup-btn")) {
+        document.getElementById("signup-btn").style.display = token ? "none" : "block";
+    }
+    if (document.getElementById("logout-btn")) {
+        document.getElementById("logout-btn").style.display = token ? "block" : "none";
+    }
+
+    // ✅ Charger les données uniquement si connecté
+    if (token) {
+        fetchUserData();
+    }
 });
+
 
 // ✅ Fonction déconnexion
 function logout() {
