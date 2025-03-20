@@ -1,4 +1,5 @@
 // Variable pour éviter les redirections multiples
+// Variable pour éviter les redirections multiples
 let hasRedirected = false;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -22,25 +23,18 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    if (token && currentPath === "/register.html") {
-        console.log("✅ Token présent sur register.html, redirection vers index");
-        hasRedirected = true;
-        window.location.href = "/index.html";
-        return;
-    }
-
     // Gestion des boutons de navigation
-    const loginBtn = document.getElementById("login-btn");
-    const registerBtn = document.getElementById("register-btn");
+    const loginBtn = document.getElementById("login-btn"); // Si présent ailleurs
+    const signupBtn = document.getElementById("signup-btn"); // Changé de register-btn à signup-btn
     const logoutBtn = document.getElementById("logout-btn");
 
     if (token) {
         if (loginBtn) loginBtn.style.display = "none";
-        if (registerBtn) registerBtn.style.display = "none";
+        if (signupBtn) signupBtn.style.display = "none"; // Cacher "S’inscrire" quand connecté
         if (logoutBtn) logoutBtn.style.display = "block";
     } else {
         if (loginBtn) loginBtn.style.display = "block";
-        if (registerBtn) registerBtn.style.display = "block";
+        if (signupBtn) signupBtn.style.display = "block";
         if (logoutBtn) logoutBtn.style.display = "none";
     }
 
@@ -59,9 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (currentPath === "/mining.html") {
             fetchMiningData();
         } else if (currentPath === "/deposit.html") {
-            // Pas de fetch supplémentaire nécessaire, juste le formulaire
+            // Pas de fetch supplémentaire nécessaire
         } else if (currentPath === "/withdraw.html") {
-            // Déjà géré par fetchUserData pour le solde
+            // Déjà géré par fetchUserData
         }
     }
 
