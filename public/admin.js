@@ -185,17 +185,17 @@ async function deleteUser(userId) {
         console.error("❌ Erreur lors de la suppression :", err);
     }
 }
-
 async function confirmDeposit(depositId) {
     if (!confirm("Confirmer ce dépôt ?")) return;
 
     try {
-        const res = await fetch(`/api/admin/deposit-requests/${depositId}/confirm`, {
+        const res = await fetch(`/api/deposits/confirm`, { // Ajuste cet endpoint selon ton backend
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("token")}` 
-            }
+            },
+            body: JSON.stringify({ depositId }) // Vérifie si ton backend attend "depositId" ou "_id"
         });
         if (!res.ok) {
             if (res.status === 401) {
