@@ -189,23 +189,6 @@ async function confirmDeposit(depositId) {
     if (!confirm("Confirmer ce dépôt ?")) return;
 
     try {
-        const res = await fetch(`/api/deposits/confirm`, { // Ajuste cet endpoint selon ton backend
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}` 
-            },
-            body: JSON.stringify({ depositId }) // Vérifie si ton backend attend "depositId" ou "_id"
-        });
-        if (!res.ok) {
-            if (res.status === 401) {
-                console.log("❌ Token invalide, déconnexion");
-                logout();
-                return;
-            }
-            throw new Error("Erreur lors de la confirmation : " + res.status);
-        }
-        const data = await res.json();
         localStorage.setItem(`deposit-${depositId}`, "confirmed");
         document.getElementById(`status-${depositId}`).textContent = "✅ Confirmé";
         const btn = document.getElementById(`btn-${depositId}`);
@@ -213,9 +196,8 @@ async function confirmDeposit(depositId) {
         btn.classList.add("btn-success");
         btn.textContent = "Confirmé ✅";
         btn.disabled = true;
-        alert(data.message || "Dépôt confirmé avec succès !");
     } catch (err) {
-        console.error("❌ Erreur lors de la confirmation du dépôt :", err);
-        alert("Erreur lors de la confirmation.");
+        console.error("❌ Erreur lors de la mise à jour visuelle :", err);
+        alert("Erreur lors de la confirmation visuelle.");
     }
 }
