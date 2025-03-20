@@ -6,23 +6,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const publicPages = ["/login.html", "/register.html"];
     const isPublicPage = publicPages.includes(currentPath);
 
-    console.log("🔍 Vérification token :", token);
+    console.log("🔍 Vérification token :", token, "Chemin actuel :", currentPath);
 
-    // ✅ Si pas de token et page privée
+    // Si pas de token et page privée
     if (!token && !isPublicPage) {
         console.log("❌ Pas de token, redirection vers login...");
+        alert("Veuillez vous connecter");
         window.location.href = "/login.html";
         return;
     }
 
-    // ✅ Si déjà connecté et sur page publique, rediriger vers l'accueil
+    // Si token existe et page publique, rediriger vers index
     if (token && isPublicPage) {
         console.log("✅ Déjà connecté, redirection vers index...");
         window.location.href = "/index.html";
         return;
     }
 
-    // ✅ Afficher les boutons
+    // Afficher/masquer les boutons si token existe
     if (token) {
         if (document.getElementById("signup-btn")) {
             document.getElementById("signup-btn").style.display = "none";
@@ -30,23 +31,28 @@ document.addEventListener("DOMContentLoaded", () => {
         if (document.getElementById("logout-btn")) {
             document.getElementById("logout-btn").style.display = "block";
         }
+        if (document.getElementById("admin-btn")) {
+            document.getElementById("admin-btn").style.display = isAdmin ? "block" : "none";
+        }
     }
 
-    // ✅ Si token valide, charger les données utilisateur
-    if (token && currentPath !== "/admin.html") {
-        fetchUserData();
+    // Charger les données spécifiques selon la page
+    if (token) {
+        if (currentPath === "/admin.html") {
+            if (isAdmin) {
+                fetchUsers();
+            } else {
+                alert("Accès réservé aux administrateurs");
+                window.location.href = "/index.html";
+                return;
+            }
+        } else if (currentPath === "/mining.html") {
+            fetchMiningData();
+        } else if (!isPublicPage) {
+            fetchUserData(); // Ne s'exécute pas sur login/register
+        }
     }
 });
-
-
-
-
-// ✅ Fonction déconnexion
-function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("isAdmin");
-    window.location.href = "/login.html";
-}
 // ✅ Chargement des données utilisateur
 async function fetchUserData() {
     try {
@@ -120,25 +126,6 @@ async function register() {
 
 
 
-
-document.addEventListener("DOMContentLoaded", function() {
-    if (token) {
-        //fetchUserData();
-        if (window.location.pathname === '/admin.html') {
-            if (isAdmin) fetchUsers();
-            else {
-                alert('Accès réservé aux administrateurs');
-                window.location.href = '/login.html';
-            }
-        }
-        if (window.location.pathname === '/mining.html') fetchMiningData();
-    } else {
-        if (!window.location.pathname.includes('/login.html') && !window.location.pathname.includes('/register.html')) {
-            alert('Veuillez vous connecter');
-            window.location.href = '/login.html';
-        }
-    }
-});
 // ✅ Correction de l'affichage du bouton Admin
 document.addEventListener("DOMContentLoaded", function() {
     let adminBtn = document.getElementById("admin-btn");
@@ -696,4 +683,11 @@ async function buyTier(level) {
         alert("Erreur lors de l'achat du palier.");
         console.error(err);
     }
+}
+
+// ✅ Fonction déconnexion
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAdmin");
+    window.location.href = "/login.html";
 }
