@@ -22,11 +22,26 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    if (token && isPublicPage) {
-        console.log("✅ Token présent sur page publique, redirection vers index");
+    if (token && currentPath === "/register.html") {
+        console.log("✅ Token présent sur register.html, redirection vers index");
         hasRedirected = true;
         window.location.href = "/index.html";
         return;
+    }
+
+    // Gestion des boutons de navigation
+    const loginBtn = document.getElementById("login-btn");
+    const registerBtn = document.getElementById("register-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    if (token) {
+        if (loginBtn) loginBtn.style.display = "none";
+        if (registerBtn) registerBtn.style.display = "none";
+        if (logoutBtn) logoutBtn.style.display = "block";
+    } else {
+        if (loginBtn) loginBtn.style.display = "block";
+        if (registerBtn) registerBtn.style.display = "block";
+        if (logoutBtn) logoutBtn.style.display = "none";
     }
 
     let adminBtn = document.getElementById("admin-btn");
@@ -43,11 +58,23 @@ document.addEventListener("DOMContentLoaded", () => {
             fetchUsers();
         } else if (currentPath === "/mining.html") {
             fetchMiningData();
+        } else if (currentPath === "/deposit.html") {
+            // Pas de fetch supplémentaire nécessaire, juste le formulaire
+        } else if (currentPath === "/withdraw.html") {
+            // Déjà géré par fetchUserData pour le solde
         }
     }
 
     checkReferralOnRegister();
 });
+
+// Fonction pour copier les numéros sans alerte
+function copyNumber(elementId) {
+    const number = document.getElementById(elementId).textContent;
+    navigator.clipboard.writeText(number).catch(err => {
+        console.error("❌ Erreur lors de la copie :", err);
+    });
+}
 
 async function fetchUserData() {
     try {
