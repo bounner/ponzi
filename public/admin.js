@@ -98,19 +98,28 @@ async function fetchDepositRequests() {
         const tbody = document.getElementById('deposit-requests');
         if (tbody) {
             tbody.innerHTML = deposits.map(d => {
-                const isConfirmed = d.status === "confirmed" || localStorage.getItem(`deposit-${d._id}`) === "confirmed";
+                const isConfirmed = localStorage.getItem(`deposit-${d._id}`) === "confirmed";
+                const isRefused = localStorage.getItem(`deposit-${d._id}`) === "refused";
                 return `
                     <tr>
                         <td>${d.phoneNumber}</td>
                         <td>${d.amount} F</td>
                         <td>${new Date(d.date).toLocaleString()}</td>
-                        <td id="status-${d._id}">${isConfirmed ? "✅ Confirmé" : "⏳ En attente"}</td>
+                        <td id="status-${d._id}">
+                            ${isConfirmed ? "✅ Confirmé" : isRefused ? "❌ Refusé" : "⏳ En attente"}
+                        </td>
                         <td>
-                            <button class="btn ${isConfirmed ? 'btn-success' : 'btn-warning'}"
+                            <button class="btn btn-sm ${isConfirmed ? 'btn-success' : isRefused ? 'btn-danger' : 'btn-warning'}"
                                     id="btn-${d._id}"
                                     onclick="confirmDeposit('${d._id}')"
-                                    ${isConfirmed ? 'disabled' : ''}>
+                                    ${isConfirmed || isRefused ? 'disabled' : ''}>
                                 ${isConfirmed ? "Confirmé ✅" : "Confirmer"}
+                            </button>
+                            <button class="btn btn-sm ${isRefused ? 'btn-danger' : 'btn-outline-danger'}"
+                                    id="refuse-btn-${d._id}"
+                                    onclick="refuseDeposit('${d._id}')"
+                                    ${isConfirmed || isRefused ? 'disabled' : ''}>
+                                ${isRefused ? "Refusé ❌" : "Refuser"}
                             </button>
                         </td>
                     </tr>`;
@@ -185,6 +194,7 @@ async function deleteUser(userId) {
         console.error("❌ Erreur lors de la suppression :", err);
     }
 }
+
 async function confirmDeposit(depositId) {
     if (!confirm("Confirmer ce dépôt ?")) return;
 
@@ -196,8 +206,31 @@ async function confirmDeposit(depositId) {
         btn.classList.add("btn-success");
         btn.textContent = "Confirmé ✅";
         btn.disabled = true;
+        // Désactiver aussi le bouton Refuser
+        const refuseBtn = document.getElementById(`refuse-btn-${depositId}`);
+        refuseBtn.disabled = true;
     } catch (err) {
         console.error("❌ Erreur lors de la mise à jour visuelle :", err);
         alert("Erreur lors de la confirmation visuelle.");
+    }
+}
+
+async function refuseDeposit(depositId) {
+    if (!confirm("Refuser ce dépôt ?")) return;
+
+    try {
+        localStorage.setItem(`deposit-${depositId}`, "refused");
+        document.getElementById(`status-${depositId}`).textContent = "❌ Refusé";
+        const btn = document.getElementById(`refuse-btn-${depositId}`);
+        btn.classList.remove("btn-outline-danger");
+        btn.classList.add("btn-danger");
+        btn.textContent = "Refusé ❌";
+        btn.disabled = true;
+        // Désactiver aussi le bouton Confirmer
+        const confirmBtn = document.getElementById(`btn-${depositId}`);
+        confirmBtn.disabled = true;
+    } catch (err) {
+        console.error("❌ Erreur lors de la mise à jour visuelle :", err);
+        alert("Erreur lors du refus visuel.");
     }
 }
